@@ -2,7 +2,7 @@
 
 The macOS file browser you always wished you had: read Markdown, documents,
 notebooks, and code; explore spreadsheets and SQLite databases; and browse
-inside ZIP/TAR archives—all without changing the originals.
+inside ZIP/TAR archives.
 
 Requires Apple Silicon and macOS 26 or later. Existing users of the old server
 should [stop and uninstall it first](#migrating-from-the-server).
