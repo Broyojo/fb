@@ -12,13 +12,14 @@ if [[ -z "$build_revision" ]]; then
   fi
 fi
 
-for tool in go xcodegen xcodebuild; do
+for tool in go python3 xcodegen xcodebuild; do
   if ! command -v "$tool" >/dev/null 2>&1; then
     echo "Missing build tool: $tool" >&2
     exit 1
   fi
 done
 
+python3 "$mac_dir/Scripts/prepare-go-notices.py" --check
 "$mac_dir/Scripts/prepare-pandoc.sh"
 mkdir -p "$mac_dir/.build/engine"
 cd "$repo_dir"

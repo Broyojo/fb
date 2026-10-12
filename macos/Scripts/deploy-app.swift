@@ -19,11 +19,20 @@ func run(_ executable: String, _ arguments: [String]) throws {
     }
 }
 
-func checkBundle(_ url: URL) throws {
+func checkBundle(_ url: URL, requireIcon: Bool = false) throws {
     let infoURL = url.appendingPathComponent("Contents/Info.plist")
     guard let info = NSDictionary(contentsOf: infoURL),
           info["CFBundleIdentifier"] as? String == "com.xoba.fb.app" else {
         throw DeployFailure(message: "Expected an fb app bundle at \(url.path); no replacement was made.")
+    }
+    if requireIcon {
+        let declaredIcon = info["CFBundleIconFile"] as? String
+        let iconURL = url.appendingPathComponent("Contents/Resources/AppIcon.icns")
+        guard info["CFBundleIconName"] as? String == "AppIcon",
+              declaredIcon == "AppIcon" || declaredIcon == "AppIcon.icns",
+              let icon = NSImage(contentsOf: iconURL), icon.isValid else {
+            throw DeployFailure(message: "The new fb bundle must declare a readable AppIcon.icns; refusing to install an iconless build.")
+        }
     }
 }
 
@@ -42,7 +51,7 @@ let previousApp = stageDirectory.appendingPathComponent("previous-fb.app")
 var keepStaging = false
 
 do {
-    try checkBundle(source)
+    try checkBundle(source, requireIcon: true)
     try fileManager.createDirectory(at: installDirectory, withIntermediateDirectories: true)
     if fileManager.fileExists(atPath: destination.path) {
         let values = try destination.resourceValues(forKeys: [.isSymbolicLinkKey])
@@ -58,6 +67,7 @@ do {
 
     // ditto preserves the bundle's metadata and nested code signatures.
     try run("/usr/bin/ditto", [source.path, stagedApp.path])
+    try checkBundle(stagedApp, requireIcon: true)
     try run("/usr/bin/codesign", ["--verify", "--deep", "--strict", stagedApp.path])
 
     // Match the installed path, so a Debug copy or open panel elsewhere is not
@@ -86,7 +96,7 @@ do {
         }
         try fileManager.moveItem(at: stagedApp, to: destination)
         installedNew = true
-        try checkBundle(destination)
+        try checkBundle(destination, requireIcon: true)
         // ditto preserves the old outer bundle timestamp. Refresh it and force
         // Launch Services to reread this exact installed bundle, including its
         // icon, even when a development build reused the same bundle version.

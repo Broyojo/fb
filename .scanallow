@@ -11,3 +11,31 @@
 
 # Standard Retina icon asset filenames resemble email addresses to the sweep.
 ^icon_(16x16|32x32|128x128|256x256|512x512)@2x\.png$
+
+# Public upstream copyright/contact attribution preserved in bundled licenses.
+^a\.leofreddi@vleo\.net$
+^david@buro9\.com$
+^dustin@spy\.net$
+^eay@cryptsoft\.com$
+^edsrzf@gmail\.com$
+^mattn\.jp@gmail\.com$
+^openssl-core@openssl\.org$
+^tjh@cryptsoft\.com$
+^appro@openssl\.org$
+^bos@serpentine\.com$
+^cabal-devel@haskell\.org$
+^gcampagn@cs\.stanford\.edu$
+^ghc-devs@haskell\.org$
+^hvr@gnu\.org$
+^jakub@jirutka\.cz$
+^jgm@berkeley\.edu$
+^jloup@gzip\.org$
+^jmacristovao@gmail\.com$
+^lakuhtz@gmail\.com$
+^madler@alumni\.caltech\.edu$
+^nicolas@primetype\.co\.uk$
+^oleg\.grenrus@iki\.fi$
+^ryan\.gl\.scott@gmail\.com$
+^ryan\.gl\.scott@ku\.edu$
+^sol@typeful\.net$
+^vincent@snarc\.org$

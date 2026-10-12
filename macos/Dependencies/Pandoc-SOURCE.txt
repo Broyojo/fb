@@ -1,0 +1,104 @@
+PANDOC 3.12.1 MACOS ARM64 SOURCE DISTRIBUTION
+
+The release supplies pandoc-3.12.1-macos-arm64-source.tar.gz alongside the app.
+It contains actual source archives, original notices, Cabal metadata revisions,
+the upstream build scripts, a reconstruction helper, and SHA256-pinned manifest.
+Sources have not been modified. Re-signing the distributed Pandoc executable
+changes its signature, not its program code.
+
+CONTENTS AND PROVENANCE
+
+* Pandoc tag 3.12.1, commit e51c9c6054c8f4ec5c3209d5abe10939dfe2963e:
+  https://github.com/jgm/pandoc/releases/tag/3.12.1
+  Full source includes pandoc-cli, pandoc-lua-engine, pandoc-server, data files,
+  XML-light internal library, INSTALL.md and macos/make_macos_release.sh.
+* Complete GHC 9.10.3 source, including runtime, boot libraries, compiler build
+  scripts, in-tree GMP 6.3.0 source and patches:
+  https://downloads.haskell.org/ghc/9.10.3/
+* 181 Hackage package versions identified from unit IDs retained in the actual
+  unmodified official executable. Every archive's SHA256 and byte length was
+  checked against official Hackage package target metadata.
+* Conservative source alternatives for function-only packages whose version IDs
+  were removed from the stripped binary, supporting compatibility packages, and
+  build tools. These include all pre-release historical versions of the listed
+  supplemental package families. Extra versions are source coverage, not a claim
+  that every version or optional dependency is part of the executable.
+* Published Cabal revisions up to the release time, 2026-10-08T01:48:41Z.
+  The original .cabal file also remains in each source archive.
+
+The manifest records exact archive URLs, SHA256 checksums, package versions,
+revision numbers and evidence categories. HTTPS official-source provenance and
+checksums were checked; no claim of independently validated Hackage TUF
+signatures is made. Downloaded source files can be regenerated from the fb
+repository with:
+
+  python3 macos/Scripts/prepare-pandoc-source.py
+
+NATIVE COMPONENTS
+
+Pandoc reports GHC 9.10.3 and Lua 5.4. The binary's strings identify Lua 5.4.8
+and LPeg 1.1.0, supplied in lua-2.3.4 and lpeg-1.1.0.1 respectively. The original
+Hackage sources include crypton, isocline and other bundled C implementations.
+libyaml-clib source variants provide libyaml's C implementation.
+
+GHC's .gitlab/jobs.yaml aarch64-darwin release recipe sets BIGNUM_BACKEND=gmp,
+--with-intree-gmp and --with-system-libffi. Its in-tree GMP source is 6.3.0.
+Pandoc contains static GMP code; its stripped executable does not retain a GMP
+version string, so the correspondence is based on the official compiler build
+recipe. The included GMP archive omits documentation as documented upstream;
+the implementation, configuration, patches and licenses are present.
+
+otool inspection found only macOS-supplied dynamic libraries: libSystem,
+libz.1, libiconv.2, libffi, libcharset.1 and Security.framework. Their native
+system implementations are not privately bundled into this app. Platform
+conditional dependencies for Windows, JavaScript and unused build flags are
+not evidence of additional native code in the macOS executable.
+
+RECONSTRUCTION
+
+Use an Apple Silicon Mac with Xcode command-line tools, Python 3.12 or later,
+GHC 9.10.3, and cabal-install 3.14. Those are build tools; the app does not need
+them. The complete compiler source is included if you wish to build GHC itself;
+follow its README.md and Hadrian documentation. GHC's upstream Darwin release
+configuration uses its in-tree GMP and the system libffi as described above.
+
+Extract this source distribution, then run:
+
+  python3 rebuild-pandoc.py
+  python3 rebuild-pandoc.py --build
+
+The helper validates all pinned input bytes and makes a local Cabal no-index
+repository containing the source archives and their latest pre-release Cabal
+revisions. Cabal selects one compatible version of each supplemental package;
+it does not treat all alternative versions as simultaneous local packages.
+It pins every package version actually identified in the binary. The upstream
+Pandoc project constraints and release feature flags remain in effect:
+
+  cabal build exe:pandoc -fembed_data_files -fserver -flua -fhttp
+
+The original upstream macOS release script is in
+work/pandoc-3.12.1/macos/make_macos_release.sh. It additionally copies manpages,
+strips the executable, creates release archives and signs packages. Signing is
+not required to rebuild the program. Optional TeX engines and external filters
+are not included in the fb app.
+
+BUILD-PLAN LIMITATION
+
+Upstream did not publish an exact arm64 Cabal plan, frozen package-index state,
+or the selected metadata revision for every dependency. The release script
+runs cabal update/build with the feature flags above. A stripped executable
+also does not disclose every function-only dependency version. Consequently
+the source archive supplies conservative alternatives and retains revision
+history instead of claiming an exact plan was recovered. An identical binary
+hash is not promised: dependency choices, optimization, linker, SDK and code
+signatures can change bytes. The reconstruction helper prepares a source build;
+it has not been used to certify bit-for-bit reproducibility of the upstream
+release. This distinction is separate from providing the source code itself.
+
+LICENSES
+
+Pandoc is GPL-2.0-or-later. Original notices for the compiler, runtime, Lua,
+LPeg, GMP and Haskell/native packages are supplied in THIRD-PARTY-NOTICES.txt
+and retained in the source archives. The app includes the same notice inventory
+as Pandoc-THIRD-PARTY-NOTICES.txt. This inventory does not change any component's
+license or provide a legal certification.

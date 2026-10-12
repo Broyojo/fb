@@ -8,8 +8,8 @@ neither Homebrew nor a separate Pandoc installation.
 
 ## Build locally
 
-The developer machine needs Xcode, XcodeGen 2.44 or later, and the Go version
-specified by the repository's `go.mod`. From the repository root:
+The developer machine needs Xcode, XcodeGen 2.44 or later, Python 3, and the Go
+version specified by the repository's `go.mod`. From the repository root:
 
 ```sh
 macos/Scripts/build.sh
@@ -22,6 +22,10 @@ dependencies. It builds the Go archive, generates `FB.xcodeproj`, and builds the
 Swift app. `project.yml` is the source of truth; do not commit the generated
 project. The initial download requires a network connection; ordinary use of
 local content does not.
+
+The build also verifies the bundled fb, Go dependency, and MathJax license
+notices. After changing Go modules, the Go toolchain, or embedded MathJax,
+regenerate and review them with `python3 macos/Scripts/prepare-go-notices.py`.
 
 Local builds select the first available Apple Development identity, falling
 back to an ad-hoc signature. Override with `FB_SIGN_IDENTITY='…'`, or use
@@ -54,10 +58,19 @@ from an uncommitted working tree carry a `-dirty` suffix. Commit before deployin
 when the installed app should identify a clean revision. The build script also
 accepts an explicit `FB_BUILD_REVISION` override.
 
-Local redeployment uses the available development signature. Developer ID
-distribution signing and notarization remain pending until cloud signing or a
-local Developer ID identity is available; deploying does not contact those
-services or publish the app.
+Local redeployment uses the available development signature. It does not perform
+Developer ID distribution signing or notarization, contact those services, or
+publish the app.
+
+To install an already notarized release built from the current clean checkout,
+preserving its distribution signature and ticket:
+
+```sh
+macos/Scripts/deploy.sh --notarized-app /absolute/path/to/notarized/fb.app
+```
+
+This verifies the recorded Git revision, Developer ID signatures, stapled ticket,
+and Gatekeeper acceptance before installing it to the same location.
 
 ## Opening files and folders
 
@@ -100,10 +113,10 @@ The intended public channels are a notarized GitHub Release download and
 [Distribution.md](Distribution.md) for the concrete release workflow and
 legacy-server migration. Local redeployment is separate from publication.
 
-Packaging requires an installed **Developer ID Application** certificate with
-its matching private key. It does not create certificates or change the Apple
-developer account. App Store Connect credentials are not required for a direct
-download. With an existing identity:
+The local packaging script requires an installed **Developer ID Application**
+certificate with its matching private key. It does not create certificates or
+change the Apple developer account. App Store Connect credentials are not
+required for this signing path. With an existing identity:
 
 ```sh
 DEVELOPER_ID_IDENTITY='Developer ID Application: Your Name (TEAMID)' \
@@ -136,15 +149,19 @@ access. The script can also authenticate with an existing team API key that has
 the required cloud Developer ID permission; successful iOS signing alone does
 not prove that permission.
 
-After a local build has prepared the Go archive, Pandoc, and generated project,
-create a development-signed archive locally:
+Commit the intended release source and run a local build to prepare the matching
+Go archive, Pandoc, and generated project. From the repository root, create a
+development-signed archive. The clean-checkout guard prevents archiving
+uncommitted source, and the explicit revision keeps About fb tied to the commit:
 
 ```sh
+test -z "$(git status --porcelain)" &&
 xcodebuild archive -project macos/FB.xcodeproj -scheme FB \
   -configuration Release -destination 'generic/platform=macOS' \
   -derivedDataPath macos/.build/xcode -archivePath macos/.build/FB.xcarchive \
   CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Development' \
-  DEVELOPMENT_TEAM=3288VRMQE7
+  DEVELOPMENT_TEAM=3288VRMQE7 \
+  FB_BUILD_REVISION="$(git rev-parse --short HEAD)"
 ```
 
 Then export using the account already signed into Xcode:
@@ -177,12 +194,55 @@ guide](https://developer.apple.com/help/account/certificates/cloud-managed-certi
 and [macOS distribution-signing
 workflow](https://developer.apple.com/documentation/xcode/creating-distribution-signed-code-for-the-mac/).
 
-Before public distribution, assemble and publish the complete corresponding
-Pandoc source and required component notices alongside the app; see
-[`Dependencies/NOTICE.md`](Dependencies/NOTICE.md). The app includes its pinned
-binary provenance and Pandoc GPL license, while `package.sh` copies those
-notices next to the archive. It does not assemble a complete dependency source
-distribution.
+### Notarize an existing signed export
+
+Use `notarize-existing.sh` on the Developer ID-signed app or ZIP produced by the
+cloud export. It also accepts an existing locally signed release. No local
+Developer ID private key is needed for this step. Check the signatures and
+architecture without submitting anything:
+
+```sh
+macos/Scripts/notarize-existing.sh --check-only /absolute/path/to/export/fb.app
+```
+
+Submit using an existing Keychain profile:
+
+```sh
+NOTARY_PROFILE='your-existing-profile' \
+  macos/Scripts/notarize-existing.sh /absolute/path/to/export/fb.app \
+  macos/.build/distribution/fb-0.1.0-arm64
+```
+
+Alternatively, use an existing team API key with file permissions `600`:
+
+```sh
+ASC_RELEASE_KEY_PATH=/absolute/path/to/AuthKey_6B7NTN43DS.p8 \
+  macos/Scripts/notarize-existing.sh /absolute/path/to/export/fb.app \
+  macos/.build/distribution/fb-0.1.0-arm64
+```
+
+Choose one authentication method, and use a fresh output directory. Key ID,
+issuer, team, and timeout overrides are described by `--help`. The script
+preserves the input, submits a staged copy to Apple, and keeps the submission
+result and available developer log. Only after acceptance, stapling, ticket
+validation, and Gatekeeper checks does it create
+`fb-<version>-arm64-notarized.zip` and its SHA-256 file in the output directory.
+It does not build, sign, install, tag, or publish the app.
+
+Prepare the Pandoc source distribution before publishing:
+
+```sh
+python3 macos/Scripts/prepare-pandoc-source.py
+```
+
+This verifies and packages the pinned source archives and Cabal revisions under
+`.build/distribution`. Publish `pandoc-3.12.1-macos-arm64-source.tar.gz` and its
+checksum alongside the app. The source includes Pandoc, GHC/runtime, linked
+components, conservative alternatives where the stripped binary omits version
+information, original notices, and a reconstruction helper. See
+[`Dependencies/Pandoc-SOURCE.txt`](Dependencies/Pandoc-SOURCE.txt) for the source
+inventory and upstream build-plan limitations. The app embeds the component
+notices and provenance; packaging copies them next to its ZIP.
 
 ## Updating Pandoc
 

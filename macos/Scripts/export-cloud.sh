@@ -123,7 +123,7 @@ fi
 # Xcode replaced every development signature in custom copied executables.
 requirement="anchor apple generic and certificate leaf[subject.OU] = \"$team_id\" and certificate 1[field.1.2.840.113635.100.6.2.6] exists and certificate leaf[field.1.2.840.113635.100.6.1.13] exists"
 for code_path in "$app_path" "$app_path/Contents/Helpers/pandoc"; do
-  if ! /usr/bin/codesign --verify --strict -R "$requirement" "$code_path"; then
+  if ! /usr/bin/codesign --verify --strict -R "=$requirement" "$code_path"; then
     echo "Exported code does not have this team's Developer ID signature: $code_path" >&2
     exit 1
   fi

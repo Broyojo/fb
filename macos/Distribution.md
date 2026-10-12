@@ -11,8 +11,27 @@ the script does not make the app available through Homebrew yet.
    Developer ID workflow in `Scripts/package.sh`, or export through an authorized
    Xcode cloud-signing account. The app and its bundled helper must have the
    expected Developer ID signatures, hardened runtime, and secure timestamps.
+   The [archive example](README.md#cloud-developer-id-signing) requires a clean
+   checkout and sets `FB_BUILD_REVISION` from Git so About fb identifies the source.
 2. Notarize the exact release and staple the ticket to the app. Create the final
    ZIP **after** stapling; `package.sh` does this when `NOTARY_PROFILE` is supplied.
+   For a cloud-signed export or an existing signed app/ZIP, use
+   `notarize-existing.sh` with an existing Keychain profile:
+
+   ```sh
+   NOTARY_PROFILE='your-existing-profile' \
+     macos/Scripts/notarize-existing.sh /absolute/path/to/export/fb.app \
+     macos/.build/distribution/fb-0.1.0-arm64
+   ```
+
+   Alternatively, replace `NOTARY_PROFILE` with
+   `ASC_RELEASE_KEY_PATH=/absolute/path/to/AuthKey_6B7NTN43DS.p8` for an existing
+   team API key with file permissions `600`. Choose one authentication method
+   and a fresh output directory. The script preserves the input, verifies both
+   Developer ID signatures, submits to Apple, and produces the final stapled ZIP
+   and checksum only after acceptance and validation. Use `--check-only` for
+   local signature/architecture checks without submission. See the
+   [notarization instructions](README.md#notarize-an-existing-signed-export).
 3. Choose the GitHub release tag and exact asset URL. A separate Mac tag namespace,
    such as `mac-v0.1.0`, avoids confusing the earlier server release tags.
 4. Generate the cask from the actual notarized artifact:
@@ -73,8 +92,12 @@ Apple account permissions.
 The app bundles Pandoc under GPL-2.0-or-later. Preserve its license/notices and
 provide the complete corresponding source for the distributed build and linked
 components as required by that license; see
-[`Dependencies/NOTICE.md`](Dependencies/NOTICE.md). An upstream source link alone
-does not assemble that source distribution. Do not publish until those release
+[`Dependencies/NOTICE.md`](Dependencies/NOTICE.md). Assemble the pinned source
+asset with `python3 macos/Scripts/prepare-pandoc-source.py` and publish the
+resulting `.build/distribution/pandoc-3.12.1-macos-arm64-source.tar.gz` and its
+checksum alongside the app. Its manifest records identified component versions
+and conservative source alternatives; `Dependencies/Pandoc-SOURCE.txt` documents
+the upstream build-plan limitations. Do not publish until those release
 materials are ready.
 
 ## References

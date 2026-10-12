@@ -1,0 +1,848 @@
+{
+  "generator": "macos/Scripts/prepare-go-notices.py",
+  "target": {
+    "GOOS": "darwin",
+    "GOARCH": "arm64",
+    "CGO_ENABLED": "1",
+    "buildTags": [
+      "fbmac"
+    ]
+  },
+  "packageCount": 430,
+  "moduleCount": 36,
+  "selection": "Production go list -deps graph, without tests. License/notice files in each compiled package directory and its ancestors through the module root are retained. Upstream aggregate notices remain intact, including any conditional or test-related attribution they contain; that does not imply those additional components are linked.",
+  "components": [
+    {
+      "name": "Go toolchain and standard library",
+      "version": "go1.27.2",
+      "source": "https://go.dev/",
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+        },
+        {
+          "path": "PATENTS",
+          "sha256": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc"
+        },
+        {
+          "path": "src/crypto/internal/boring/LICENSE",
+          "sha256": "56210f826b8f0fbac3160dfe55c97f4019eb6cdda3963b5a0eab8a8bdb62360e"
+        },
+        {
+          "path": "src/vendor/golang.org/x/crypto/LICENSE",
+          "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+        },
+        {
+          "path": "src/vendor/golang.org/x/crypto/PATENTS",
+          "sha256": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc"
+        },
+        {
+          "path": "src/vendor/golang.org/x/net/LICENSE",
+          "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+        },
+        {
+          "path": "src/vendor/golang.org/x/net/PATENTS",
+          "sha256": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc"
+        },
+        {
+          "path": "src/vendor/golang.org/x/text/LICENSE",
+          "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+        },
+        {
+          "path": "src/vendor/golang.org/x/text/PATENTS",
+          "sha256": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc"
+        }
+      ]
+    },
+    {
+      "name": "github.com/alecthomas/chroma/v2",
+      "version": "v2.27.0",
+      "sourceModule": "github.com/alecthomas/chroma/v2",
+      "sourceVersion": "v2.27.0",
+      "packages": [
+        "github.com/alecthomas/chroma/v2",
+        "github.com/alecthomas/chroma/v2/formatters/html",
+        "github.com/alecthomas/chroma/v2/lexers",
+        "github.com/alecthomas/chroma/v2/styles"
+      ],
+      "notices": [
+        {
+          "path": "COPYING",
+          "sha256": "13654b052f885cb3fa47d7343e13975d9c8a64c3bcd84993c35d5eb01f22b23f"
+        }
+      ]
+    },
+    {
+      "name": "github.com/andybalholm/brotli",
+      "version": "v1.2.6",
+      "sourceModule": "github.com/andybalholm/brotli",
+      "sourceVersion": "v1.2.6",
+      "packages": [
+        "github.com/andybalholm/brotli",
+        "github.com/andybalholm/brotli/matchfinder"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94"
+        }
+      ]
+    },
+    {
+      "name": "github.com/aymerick/douceur",
+      "version": "v0.2.0",
+      "sourceModule": "github.com/aymerick/douceur",
+      "sourceVersion": "v0.2.0",
+      "packages": [
+        "github.com/aymerick/douceur/css",
+        "github.com/aymerick/douceur/parser"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "a91ec19456c4efb3d9fc22dc9c1ec60ec3701a9e8f4be511ebcf908c04288ffb"
+        }
+      ]
+    },
+    {
+      "name": "github.com/dhowden/tag",
+      "version": "v0.0.0-20240417053706-3d75831295e8",
+      "sourceModule": "github.com/dhowden/tag",
+      "sourceVersion": "v0.0.0-20240417053706-3d75831295e8",
+      "packages": [
+        "github.com/dhowden/tag"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "dca9103f610a5e0d49bc95f2a11e0bac3502ef0483637a04979645d9e4b3bb40"
+        }
+      ]
+    },
+    {
+      "name": "github.com/dlclark/regexp2/v2",
+      "version": "v2.8.4",
+      "sourceModule": "github.com/dlclark/regexp2/v2",
+      "sourceVersion": "v2.8.4",
+      "packages": [
+        "github.com/dlclark/regexp2/v2",
+        "github.com/dlclark/regexp2/v2/helpers",
+        "github.com/dlclark/regexp2/v2/syntax"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "9be5d04bb4d706914d5bf943710da4afeb42048f7c529902fb57c82762a991a9"
+        }
+      ]
+    },
+    {
+      "name": "github.com/dustin/go-humanize",
+      "version": "v1.1.0",
+      "sourceModule": "github.com/dustin/go-humanize",
+      "sourceVersion": "v1.1.0",
+      "packages": [
+        "github.com/dustin/go-humanize"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "a973b4498c13eb74baa2a8e5c351426a6826f2fcdd909916dbe53ee2e755fd71"
+        }
+      ]
+    },
+    {
+      "name": "github.com/google/uuid",
+      "version": "v1.6.0",
+      "sourceModule": "github.com/google/uuid",
+      "sourceVersion": "v1.6.0",
+      "packages": [
+        "github.com/google/uuid"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "0a8d61ed3cbfd5312326e8126c31ce9c627a283adc99131b56896d29ada04b2d"
+        }
+      ]
+    },
+    {
+      "name": "github.com/gorilla/css",
+      "version": "v1.0.1",
+      "sourceModule": "github.com/gorilla/css",
+      "sourceVersion": "v1.0.1",
+      "packages": [
+        "github.com/gorilla/css/scanner"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "af11d643d903cb178a641d7512879285287844f7a6c0611e2d0c6b131e50188b"
+        }
+      ]
+    },
+    {
+      "name": "github.com/klauspost/compress",
+      "version": "v1.20.1",
+      "sourceModule": "github.com/klauspost/compress",
+      "sourceVersion": "v1.20.1",
+      "packages": [
+        "github.com/klauspost/compress",
+        "github.com/klauspost/compress/flate",
+        "github.com/klauspost/compress/fse",
+        "github.com/klauspost/compress/gzip",
+        "github.com/klauspost/compress/huff0",
+        "github.com/klauspost/compress/internal/le",
+        "github.com/klauspost/compress/internal/race",
+        "github.com/klauspost/compress/internal/regmask",
+        "github.com/klauspost/compress/internal/snapref",
+        "github.com/klauspost/compress/s2",
+        "github.com/klauspost/compress/snappy",
+        "github.com/klauspost/compress/zstd",
+        "github.com/klauspost/compress/zstd/internal/xxhash"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "0d9e582ee4bff57bf1189c9e514e6da7ce277f9cd3bc2d488b22fbb39a6d87cf"
+        },
+        {
+          "path": "internal/snapref/LICENSE",
+          "sha256": "f69f157b0be75da373605dbc8bbf142e8924ee82d8f44f11bcaf351335bf98cf"
+        },
+        {
+          "path": "s2/LICENSE",
+          "sha256": "08683b14bda8ae3538abf19e1879e853a39e3b8276a8d673363b529d15a61c1a"
+        },
+        {
+          "path": "snappy/LICENSE",
+          "sha256": "f69f157b0be75da373605dbc8bbf142e8924ee82d8f44f11bcaf351335bf98cf"
+        },
+        {
+          "path": "zstd/internal/xxhash/LICENSE.txt",
+          "sha256": "f566a9f97bacdaf00d9f21dd991e81dc11201c4e016c86b470799429a1c9a79c"
+        }
+      ]
+    },
+    {
+      "name": "github.com/mattn/go-isatty",
+      "version": "v0.0.24",
+      "sourceModule": "github.com/mattn/go-isatty",
+      "sourceVersion": "v0.0.24",
+      "packages": [
+        "github.com/mattn/go-isatty"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "08eab1118c80885fa1fa6a6dd7303f65a379fcb3733e063d20d1bbc2c76e6fa1"
+        }
+      ]
+    },
+    {
+      "name": "github.com/microcosm-cc/bluemonday",
+      "version": "v1.0.27",
+      "sourceModule": "github.com/microcosm-cc/bluemonday",
+      "sourceVersion": "v1.0.27",
+      "packages": [
+        "github.com/microcosm-cc/bluemonday",
+        "github.com/microcosm-cc/bluemonday/css"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE.md",
+          "sha256": "a8e8489f1168b5f3e0ebb43d7fe1c78a2fd7db9939c1a6cb555940a4b631f8d2"
+        }
+      ]
+    },
+    {
+      "name": "github.com/ncruces/go-strftime",
+      "version": "v1.1.0",
+      "sourceModule": "github.com/ncruces/go-strftime",
+      "sourceVersion": "v1.1.0",
+      "packages": [
+        "github.com/ncruces/go-strftime"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "38ae43959daf953a393a585b2988672cb65a5a541aca0d0be5e72595a0a16883"
+        }
+      ]
+    },
+    {
+      "name": "github.com/parquet-go/bitpack",
+      "version": "v1.1.0",
+      "sourceModule": "github.com/parquet-go/bitpack",
+      "sourceVersion": "v1.1.0",
+      "packages": [
+        "github.com/parquet-go/bitpack",
+        "github.com/parquet-go/bitpack/unsafecast"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "60b40d1daf0447cec605f6b16d56d65c3126e330e4abad3cb59e947b5a17c154"
+        }
+      ]
+    },
+    {
+      "name": "github.com/parquet-go/jsonlite",
+      "version": "v1.5.5",
+      "sourceModule": "github.com/parquet-go/jsonlite",
+      "sourceVersion": "v1.5.5",
+      "packages": [
+        "github.com/parquet-go/jsonlite"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "41f5ba4fb9480c7f8a0f834bf8ce0cc5b25a9c30715d261e38218b4a93f42b3e"
+        }
+      ]
+    },
+    {
+      "name": "github.com/parquet-go/parquet-go",
+      "version": "v0.32.0",
+      "sourceModule": "github.com/parquet-go/parquet-go",
+      "sourceVersion": "v0.32.0",
+      "packages": [
+        "github.com/parquet-go/parquet-go",
+        "github.com/parquet-go/parquet-go/bloom",
+        "github.com/parquet-go/parquet-go/bloom/xxhash",
+        "github.com/parquet-go/parquet-go/compress",
+        "github.com/parquet-go/parquet-go/compress/brotli",
+        "github.com/parquet-go/parquet-go/compress/gzip",
+        "github.com/parquet-go/parquet-go/compress/lz4",
+        "github.com/parquet-go/parquet-go/compress/snappy",
+        "github.com/parquet-go/parquet-go/compress/uncompressed",
+        "github.com/parquet-go/parquet-go/compress/zstd",
+        "github.com/parquet-go/parquet-go/deprecated",
+        "github.com/parquet-go/parquet-go/encoding",
+        "github.com/parquet-go/parquet-go/encoding/bitpacked",
+        "github.com/parquet-go/parquet-go/encoding/bytestreamsplit",
+        "github.com/parquet-go/parquet-go/encoding/delta",
+        "github.com/parquet-go/parquet-go/encoding/plain",
+        "github.com/parquet-go/parquet-go/encoding/rle",
+        "github.com/parquet-go/parquet-go/encoding/thrift",
+        "github.com/parquet-go/parquet-go/format",
+        "github.com/parquet-go/parquet-go/hashprobe",
+        "github.com/parquet-go/parquet-go/hashprobe/aeshash",
+        "github.com/parquet-go/parquet-go/hashprobe/wyhash",
+        "github.com/parquet-go/parquet-go/internal/bytealg",
+        "github.com/parquet-go/parquet-go/internal/debug",
+        "github.com/parquet-go/parquet-go/internal/memory",
+        "github.com/parquet-go/parquet-go/internal/unsafecast",
+        "github.com/parquet-go/parquet-go/sparse",
+        "github.com/parquet-go/parquet-go/variant"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "6720c58d56926778b4656eb72c446ef65e8a416e2d2af498c8caaab24a02c8e9"
+        },
+        {
+          "path": "bloom/xxhash/LICENSE",
+          "sha256": "4112d993296f1603d62efbc010a78c904874f43b8222ef0f6995a6385f431e72"
+        },
+        {
+          "path": "encoding/thrift/LICENSE",
+          "sha256": "d6d71a1f7dc6539e371120cc7af6e3257e55ca79634d473211f217b8965b0f16"
+        }
+      ]
+    },
+    {
+      "name": "github.com/pierrec/lz4/v4",
+      "version": "v4.1.33",
+      "sourceModule": "github.com/pierrec/lz4/v4",
+      "sourceVersion": "v4.1.33",
+      "packages": [
+        "github.com/pierrec/lz4/v4",
+        "github.com/pierrec/lz4/v4/internal/lz4block",
+        "github.com/pierrec/lz4/v4/internal/lz4errors",
+        "github.com/pierrec/lz4/v4/internal/lz4stream",
+        "github.com/pierrec/lz4/v4/internal/xxh32"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "6a358d2540ca14048f02d366f23787c0a480157e58f058113f0e27168dd4e447"
+        }
+      ]
+    },
+    {
+      "name": "github.com/remyoudompheng/bigfft",
+      "version": "v0.0.0-20230129092748-24d4a6f8daec",
+      "sourceModule": "github.com/remyoudompheng/bigfft",
+      "sourceVersion": "v0.0.0-20230129092748-24d4a6f8daec",
+      "packages": [
+        "github.com/remyoudompheng/bigfft"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "dd26a7abddd02e2d0aba97805b31f248ef7835d9e10da289b22e3b8ab78b324d"
+        }
+      ]
+    },
+    {
+      "name": "github.com/richardlehane/mscfb",
+      "version": "v1.0.9",
+      "sourceModule": "github.com/richardlehane/mscfb",
+      "sourceVersion": "v1.0.9",
+      "packages": [
+        "github.com/richardlehane/mscfb"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ]
+    },
+    {
+      "name": "github.com/richardlehane/msoleps",
+      "version": "v1.0.6",
+      "sourceModule": "github.com/richardlehane/msoleps",
+      "sourceVersion": "v1.0.6",
+      "packages": [
+        "github.com/richardlehane/msoleps/types"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ]
+    },
+    {
+      "name": "github.com/rwcarlsen/goexif",
+      "version": "v0.0.0-20190401172101-9e8deecbddbd",
+      "sourceModule": "github.com/rwcarlsen/goexif",
+      "sourceVersion": "v0.0.0-20190401172101-9e8deecbddbd",
+      "packages": [
+        "github.com/rwcarlsen/goexif/exif",
+        "github.com/rwcarlsen/goexif/tiff"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "872bb1acd62e409fee70e436c32382e6b00f5c61f1df1263bd7989ccab49828b"
+        }
+      ]
+    },
+    {
+      "name": "github.com/tiendc/go-deepcopy",
+      "version": "v1.7.2",
+      "sourceModule": "github.com/tiendc/go-deepcopy",
+      "sourceVersion": "v1.7.2",
+      "packages": [
+        "github.com/tiendc/go-deepcopy"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "790522a8c994c2adf4c35397a0bc2fe68e59feb7b59fba812586403d15692c71"
+        }
+      ]
+    },
+    {
+      "name": "github.com/twpayne/go-geom",
+      "version": "v1.7.0",
+      "sourceModule": "github.com/twpayne/go-geom",
+      "sourceVersion": "v1.7.0",
+      "packages": [
+        "github.com/twpayne/go-geom",
+        "github.com/twpayne/go-geom/encoding/wkb",
+        "github.com/twpayne/go-geom/encoding/wkbcommon"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "da768bc957ae59e3436b922f8e5a29c050c192d88161f5d2f90ce5e58f9fd08d"
+        }
+      ]
+    },
+    {
+      "name": "github.com/xuri/efp",
+      "version": "v0.0.2",
+      "sourceModule": "github.com/xuri/efp",
+      "sourceVersion": "v0.0.2",
+      "packages": [
+        "github.com/xuri/efp"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "d53cb863b9c33f0ae5deab2b69d00e4cb2dcd862ba3abeaf03b784dacf0df0d8"
+        }
+      ]
+    },
+    {
+      "name": "github.com/xuri/excelize/v2",
+      "version": "v2.11.0",
+      "sourceModule": "github.com/xuri/excelize/v2",
+      "sourceVersion": "v2.11.0",
+      "packages": [
+        "github.com/xuri/excelize/v2"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "0b8e4f8789b88fa44dee713d934e4d36f52854b33670ab4a0ce3de69e8e224cd"
+        }
+      ]
+    },
+    {
+      "name": "github.com/xuri/nfp",
+      "version": "v0.0.2-0.20250530014748-2ddeb826f9a9",
+      "sourceModule": "github.com/xuri/nfp",
+      "sourceVersion": "v0.0.2-0.20250530014748-2ddeb826f9a9",
+      "packages": [
+        "github.com/xuri/nfp"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "0de3fcd687652dc103446ce5c0d2aec948fbbb1f9099b3c1958c3fd62ba941a0"
+        }
+      ]
+    },
+    {
+      "name": "golang.org/x/crypto",
+      "version": "v0.57.0",
+      "sourceModule": "golang.org/x/crypto",
+      "sourceVersion": "v0.57.0",
+      "packages": [
+        "golang.org/x/crypto/md4",
+        "golang.org/x/crypto/ripemd160"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+        },
+        {
+          "path": "PATENTS",
+          "sha256": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc"
+        }
+      ]
+    },
+    {
+      "name": "golang.org/x/image",
+      "version": "v0.46.0",
+      "sourceModule": "golang.org/x/image",
+      "sourceVersion": "v0.46.0",
+      "packages": [
+        "golang.org/x/image/bmp",
+        "golang.org/x/image/ccitt",
+        "golang.org/x/image/internal/safemath",
+        "golang.org/x/image/riff",
+        "golang.org/x/image/tiff",
+        "golang.org/x/image/tiff/lzw",
+        "golang.org/x/image/vp8",
+        "golang.org/x/image/vp8l",
+        "golang.org/x/image/webp"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+        },
+        {
+          "path": "PATENTS",
+          "sha256": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc"
+        }
+      ]
+    },
+    {
+      "name": "golang.org/x/mod",
+      "version": "v0.41.0",
+      "sourceModule": "golang.org/x/mod",
+      "sourceVersion": "v0.41.0",
+      "packages": [
+        "golang.org/x/mod/internal/lazyregexp",
+        "golang.org/x/mod/modfile",
+        "golang.org/x/mod/module",
+        "golang.org/x/mod/semver"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+        },
+        {
+          "path": "PATENTS",
+          "sha256": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc"
+        }
+      ]
+    },
+    {
+      "name": "golang.org/x/net",
+      "version": "v0.60.0",
+      "sourceModule": "golang.org/x/net",
+      "sourceVersion": "v0.60.0",
+      "packages": [
+        "golang.org/x/net/html",
+        "golang.org/x/net/html/atom",
+        "golang.org/x/net/html/charset"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+        },
+        {
+          "path": "PATENTS",
+          "sha256": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc"
+        }
+      ]
+    },
+    {
+      "name": "golang.org/x/sys",
+      "version": "v0.48.0",
+      "sourceModule": "golang.org/x/sys",
+      "sourceVersion": "v0.48.0",
+      "packages": [
+        "golang.org/x/sys/cpu",
+        "golang.org/x/sys/unix"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+        },
+        {
+          "path": "PATENTS",
+          "sha256": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc"
+        }
+      ]
+    },
+    {
+      "name": "golang.org/x/text",
+      "version": "v0.42.0",
+      "sourceModule": "golang.org/x/text",
+      "sourceVersion": "v0.42.0",
+      "packages": [
+        "golang.org/x/text/cases",
+        "golang.org/x/text/encoding",
+        "golang.org/x/text/encoding/charmap",
+        "golang.org/x/text/encoding/htmlindex",
+        "golang.org/x/text/encoding/internal",
+        "golang.org/x/text/encoding/internal/identifier",
+        "golang.org/x/text/encoding/japanese",
+        "golang.org/x/text/encoding/korean",
+        "golang.org/x/text/encoding/simplifiedchinese",
+        "golang.org/x/text/encoding/traditionalchinese",
+        "golang.org/x/text/encoding/unicode",
+        "golang.org/x/text/feature/plural",
+        "golang.org/x/text/internal",
+        "golang.org/x/text/internal/catmsg",
+        "golang.org/x/text/internal/format",
+        "golang.org/x/text/internal/language",
+        "golang.org/x/text/internal/language/compact",
+        "golang.org/x/text/internal/number",
+        "golang.org/x/text/internal/stringset",
+        "golang.org/x/text/internal/tag",
+        "golang.org/x/text/internal/utf8internal",
+        "golang.org/x/text/language",
+        "golang.org/x/text/message",
+        "golang.org/x/text/message/catalog",
+        "golang.org/x/text/runes",
+        "golang.org/x/text/transform",
+        "golang.org/x/text/unicode/norm",
+        "golang.org/x/text/width"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+        },
+        {
+          "path": "PATENTS",
+          "sha256": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc"
+        }
+      ]
+    },
+    {
+      "name": "google.golang.org/protobuf",
+      "version": "v1.36.12",
+      "sourceModule": "google.golang.org/protobuf",
+      "sourceVersion": "v1.36.12",
+      "packages": [
+        "google.golang.org/protobuf/encoding/protojson",
+        "google.golang.org/protobuf/encoding/prototext",
+        "google.golang.org/protobuf/encoding/protowire",
+        "google.golang.org/protobuf/internal/descfmt",
+        "google.golang.org/protobuf/internal/descopts",
+        "google.golang.org/protobuf/internal/detrand",
+        "google.golang.org/protobuf/internal/editiondefaults",
+        "google.golang.org/protobuf/internal/encoding/defval",
+        "google.golang.org/protobuf/internal/encoding/json",
+        "google.golang.org/protobuf/internal/encoding/messageset",
+        "google.golang.org/protobuf/internal/encoding/tag",
+        "google.golang.org/protobuf/internal/encoding/text",
+        "google.golang.org/protobuf/internal/errors",
+        "google.golang.org/protobuf/internal/filedesc",
+        "google.golang.org/protobuf/internal/filetype",
+        "google.golang.org/protobuf/internal/flags",
+        "google.golang.org/protobuf/internal/genid",
+        "google.golang.org/protobuf/internal/impl",
+        "google.golang.org/protobuf/internal/order",
+        "google.golang.org/protobuf/internal/pragma",
+        "google.golang.org/protobuf/internal/protolazy",
+        "google.golang.org/protobuf/internal/set",
+        "google.golang.org/protobuf/internal/strs",
+        "google.golang.org/protobuf/internal/version",
+        "google.golang.org/protobuf/proto",
+        "google.golang.org/protobuf/reflect/protoreflect",
+        "google.golang.org/protobuf/reflect/protoregistry",
+        "google.golang.org/protobuf/runtime/protoiface",
+        "google.golang.org/protobuf/runtime/protoimpl",
+        "google.golang.org/protobuf/types/known/anypb",
+        "google.golang.org/protobuf/types/known/durationpb",
+        "google.golang.org/protobuf/types/known/structpb",
+        "google.golang.org/protobuf/types/known/timestamppb",
+        "google.golang.org/protobuf/types/known/wrapperspb"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "4835612df0098ca95f8e7d9e3bffcb02358d435dbb38057c844c99d7f725eb20"
+        },
+        {
+          "path": "PATENTS",
+          "sha256": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc"
+        }
+      ]
+    },
+    {
+      "name": "modernc.org/libc",
+      "version": "v1.77.1",
+      "sourceModule": "modernc.org/libc",
+      "sourceVersion": "v1.77.1",
+      "packages": [
+        "modernc.org/libc",
+        "modernc.org/libc/errno",
+        "modernc.org/libc/fcntl",
+        "modernc.org/libc/fts",
+        "modernc.org/libc/grp",
+        "modernc.org/libc/honnef.co/go/netdb",
+        "modernc.org/libc/langinfo",
+        "modernc.org/libc/limits",
+        "modernc.org/libc/netdb",
+        "modernc.org/libc/netinet/in",
+        "modernc.org/libc/poll",
+        "modernc.org/libc/pthread",
+        "modernc.org/libc/pwd",
+        "modernc.org/libc/signal",
+        "modernc.org/libc/stdio",
+        "modernc.org/libc/stdlib",
+        "modernc.org/libc/sys/socket",
+        "modernc.org/libc/sys/stat",
+        "modernc.org/libc/sys/types",
+        "modernc.org/libc/termios",
+        "modernc.org/libc/time",
+        "modernc.org/libc/unistd",
+        "modernc.org/libc/utime",
+        "modernc.org/libc/uuid/uuid",
+        "modernc.org/libc/wctype"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "95ff867eb55a56935fa7492406cfa953fb7c13ca73f4c0a86ae05756b4605600"
+        },
+        {
+          "path": "LICENSE-3RD-PARTY.md",
+          "sha256": "f597097efe3d97021f89170746bd3a0fb9a8b6fb26b82043ed68a4e0283bee6c"
+        }
+      ]
+    },
+    {
+      "name": "modernc.org/mathutil",
+      "version": "v1.7.1",
+      "sourceModule": "modernc.org/mathutil",
+      "sourceVersion": "v1.7.1",
+      "packages": [
+        "modernc.org/mathutil"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "bfa9bf72a72ca009fd62a8f84fca3dca67e51d93af96352723646599898b6cf5"
+        }
+      ]
+    },
+    {
+      "name": "modernc.org/memory",
+      "version": "v1.12.1",
+      "sourceModule": "modernc.org/memory",
+      "sourceVersion": "v1.12.1",
+      "packages": [
+        "modernc.org/memory"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "59895e669f48f168b6b858358f6005779cdf40a265f7828813061b56af67b496"
+        },
+        {
+          "path": "LICENSE-GO",
+          "sha256": "2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067"
+        },
+        {
+          "path": "LICENSE-LOGO",
+          "sha256": "5ae5bee3072a841376451b48d8cfcec7188e10543926d5870828d36c8a750dc5"
+        },
+        {
+          "path": "LICENSE-MMAP-GO",
+          "sha256": "c2eba69f20d05414538c3a5df7694dde392e065ff70882e1625e90f5d6659fff"
+        }
+      ]
+    },
+    {
+      "name": "modernc.org/sqlite",
+      "version": "v1.60.1",
+      "sourceModule": "modernc.org/sqlite",
+      "sourceVersion": "v1.60.1",
+      "packages": [
+        "modernc.org/sqlite",
+        "modernc.org/sqlite/lib",
+        "modernc.org/sqlite/vtab"
+      ],
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "c6fe05491a60ae13bcd223088d2705e36dede24e5587226231d2459ada5c4822"
+        },
+        {
+          "path": "LICENSE-3RD-PARTY.md",
+          "sha256": "b4366b9c27a9364633e015011a231913ed19bf1228f335bf617e50a6f7b168a6"
+        },
+        {
+          "path": "LICENSE-SQLITE",
+          "sha256": "8438c9c89b849131ead81d5435cb97fcf052df5b0b286dda8a2d4c29e6cb3fd0"
+        },
+        {
+          "path": "LICENSE-SQLITE_VEC",
+          "sha256": "6ce72bbe12d975bd5286e5ab0a064c069693300c47bccbc57bec18485f1621ea"
+        }
+      ]
+    },
+    {
+      "name": "MathJax (embedded JavaScript and fonts)",
+      "version": "3.2.2",
+      "source": "https://github.com/mathjax/MathJax",
+      "asset": "assets/mathjax/tex-mml-chtml.js",
+      "assetSHA256": "300480069078b5892d2363a2b65e2dfbbf30fe5c80f83edbfecf4610fd093862",
+      "notices": [
+        {
+          "path": "LICENSE",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ]
+    }
+  ]
+}

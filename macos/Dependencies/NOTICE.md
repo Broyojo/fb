@@ -21,10 +21,15 @@ recorded in `pandoc.json`. The executable embeds Pandoc's required data files.
 The app invokes Pandoc as a separate executable; it does not link it into Swift
 or Go. Optional external filters and TeX/PDF engines are not included.
 
-For distributors: provide the complete corresponding source for this Pandoc
-build and its linked components as required by the included license. Preserve
-the upstream build configuration, package versions, license notices, and any
-local modifications. Publish that material alongside the app's download;
-these upstream links are provenance, not a substitute for a complete source
-distribution. The packaging script produces the app archive and copies these
-notices; it does not assemble that complete source distribution.
+The release includes `pandoc-3.12.1-macos-arm64-source.tar.gz` alongside the app.
+It supplies Pandoc, compiler/runtime, and dependency sources, original build
+scripts, published Cabal metadata revisions, a reconstruction helper, and a
+checksum manifest. `Pandoc-SOURCE.txt` explains its contents and the upstream
+build-plan limitations; `pandoc-source-manifest.json` distinguishes identified
+versions from conservative source alternatives. Additional original component
+licenses appear in `Pandoc-THIRD-PARTY-NOTICES.txt` and the source archives.
+
+Distributors can regenerate the source asset with
+`python3 macos/Scripts/prepare-pandoc-source.py`. Preserve and distribute that
+asset and these notices alongside the app. The upstream links above record
+provenance; the release asset supplies the actual source files.

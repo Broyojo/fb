@@ -91,7 +91,7 @@ fi
 /usr/bin/codesign --verify --deep --strict "$app_path"
 requirement="anchor apple generic and certificate leaf[subject.OU] = \"$team_id\" and certificate 1[field.1.2.840.113635.100.6.2.6] exists and certificate leaf[field.1.2.840.113635.100.6.1.13] exists"
 for code_path in "$app_path" "$app_path/Contents/Helpers/pandoc"; do
-  /usr/bin/codesign --verify --strict -R "$requirement" "$code_path"
+  /usr/bin/codesign --verify --strict -R "=$requirement" "$code_path"
   details="$(/usr/bin/codesign -d --verbose=4 "$code_path" 2>&1)"
   if [[ "$details" != *'(runtime)'* || "$details" != *'Timestamp='* ]]; then
     echo "Code lacks hardened runtime or secure timestamp: $code_path" >&2
