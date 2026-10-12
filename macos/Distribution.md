@@ -68,7 +68,21 @@ Homebrew's cask style/audit checks and test the install before committing the ta
 update. No script here publishes a GitHub release, creates a tag, or edits/pushes
 the tap automatically.
 
-Installation is:
+For users migrating from the old Homebrew formula, stop and remove the server
+before installing the cask:
+
+```sh
+brew services stop fb
+brew uninstall --formula xoba/tap/fb
+brew install --cask xoba/tap/fb
+```
+
+For a server login service installed from source, run `./service.sh uninstall`
+in its checkout before installing the app. Quit any manually started server.
+These steps leave documents in place; the app needs no server. The cask does
+not stop services or uninstall the formula automatically.
+
+For a fresh installation, only the cask step is needed:
 
 ```sh
 brew install --cask xoba/tap/fb

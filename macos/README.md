@@ -6,7 +6,10 @@ app as a C archive; the app does not launch an HTTP server or use localhost.
 Pandoc 3.12.1 is bundled as a private converter executable. End users need
 neither Homebrew nor a separate Pandoc installation.
 
-Install the [signed and notarized release](https://github.com/xoba/fb/releases/latest)
+Existing server users should first follow the
+[stop/uninstall migration steps](../README.md#migrating-from-the-server).
+For a fresh installation, download the
+[signed and notarized release](https://github.com/xoba/fb/releases/latest)
 directly, or run `brew install --cask xoba/tap/fb`.
 
 ## Build locally
@@ -81,6 +84,18 @@ Dock, open `~/Applications/fb.app`, and choose Options → Keep in Dock on its
 new icon. Removing the shortcut does not remove the app or documents.
 
 ## Opening files and folders
+
+From a terminal, pass files or directories to the app through macOS:
+
+```sh
+open -b com.xoba.fb.app -- README.md
+open -b com.xoba.fb.app -- .
+```
+
+Multiple paths and paths containing spaces are supported. See
+[Open from the terminal](../README.md#open-from-the-terminal) for an optional
+`fb` shell shortcut and how to select a particular installed app. The cask does
+not ship a CLI executable, and the app has no public URL scheme.
 
 Use File → Open (⌘O), Finder's Open With, or drop files and folders directly
 onto the document view. The first dropped item opens in the current window;

@@ -5,7 +5,23 @@ or later. It presents documents, source code, spreadsheets, databases, and
 archives in a readable interface.
 
 This release is version 0.1.0, build 2, signed with Developer ID and notarized
-by Apple. Install it with:
+by Apple.
+
+**Migrating from the old Homebrew server?** Stop its service and uninstall the
+formula before installing the app:
+
+```sh
+brew services stop fb
+brew uninstall --formula xoba/tap/fb
+brew install --cask xoba/tap/fb
+```
+
+The cask does not stop or remove the old server automatically. For a server
+login service installed from a source checkout, run `./service.sh uninstall`
+there first. Quit any manually started server. Your documents remain in place;
+the standalone app needs no server.
+
+For a fresh installation, run only:
 
 ```sh
 brew install --cask xoba/tap/fb
@@ -17,6 +33,10 @@ dependency notices, and Pandoc source archive.
 - Open files and folders from Finder, the Desktop, Open With, or File → Open.
   Dropped items are opened at their original locations; multiple items open
   separate windows.
+- Open a file or directory from the terminal with
+  `open -b com.xoba.fb.app -- README.md` or `open -b com.xoba.fb.app -- .`.
+  See the [terminal instructions](https://github.com/xoba/fb#open-from-the-terminal)
+  for an optional `fb` shell shortcut.
 - Read Markdown with math, office documents, notebooks, EPUB books, highlighted
   source code, calendars, and supported PDF, image, audio, and video files.
 - Browse spreadsheets, SQLite databases, and archives. Run read-only SQL
@@ -36,11 +56,6 @@ annotations are optional and require Git to be available.
 The app is a viewer: browsing and SQL queries leave original documents
 unchanged. Save a Copy writes to the destination you select. Some formats
 have display or size limits; the interface reports limits where applicable.
-
-Existing users of the deprecated Homebrew server can stop its login service
-with `brew services stop fb`. For a service installed from a source checkout,
-run `./service.sh uninstall` there. The standalone app does not need either
-service, and stopping them does not remove documents.
 
 Pandoc and other bundled components retain their respective licenses. See the
 dependency notices and corresponding source materials supplied with the

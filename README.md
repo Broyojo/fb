@@ -11,7 +11,8 @@ code remains shared with the app; deprecating the server does not remove the
 viewers. Download the [signed and notarized macOS release](https://github.com/xoba/fb/releases/latest)
 or install it through Homebrew Cask.
 
-- [Installing](#installing) · [Configuration](#configuration) · [Port fallback](#port-fallback)
+- [Installing](#installing) · [Open from the terminal](#open-from-the-terminal)
+- [Legacy server configuration](#configuration) · [Port fallback](#port-fallback)
 - [The one rule: navigations render, everything else is raw](#the-one-rule-navigations-render-everything-else-is-raw)
 - [File types with special formatting](#file-types-with-special-formatting) · [at a glance](#all-specially-handled-types-at-a-glance)
 - [Drag and drop](#drag-and-drop)
@@ -20,6 +21,28 @@ or install it through Homebrew Cask.
 - [How it works, generally](#how-it-works-generally)
 
 ## Installing
+
+### Migrating from the server
+
+If you installed the old Homebrew formula, stop its service and uninstall the
+formula **before** installing the app cask:
+
+```sh
+brew services stop fb
+brew uninstall --formula xoba/tap/fb
+brew install --cask xoba/tap/fb
+```
+
+The cask does not stop or uninstall the old server automatically. This is a
+switch from a formula to a cask; `brew upgrade fb` does not perform it. Removing
+the old server does not remove your documents, and the app reads them in place.
+
+If you installed the server's login service from a source checkout, run
+`./service.sh uninstall` there before installing the app. Quit any server you
+started manually in a terminal as well. The app needs no running server.
+
+For a fresh installation, skip the server removal steps and use the cask
+installation below.
 
 ### macOS app
 
@@ -57,22 +80,45 @@ Releases. Update it with `brew upgrade --cask xoba/tap/fb`. Releases also includ
 checksums, dependency notices, and Pandoc source materials. See the
 [distribution workflow](macos/Distribution.md) for release and migration steps.
 
-### Migrating from the server
+### Open from the terminal
 
-The app needs no running server. Stop the Homebrew service if installed:
-
-```sh
-brew services stop fb
-```
-
-If the server was installed from this checkout, remove its login service:
+macOS's `open` command sends files and folders directly to the installed app:
 
 ```sh
-./service.sh uninstall
+open -b com.xoba.fb.app -- README.md
+open -b com.xoba.fb.app -- .
+open -b com.xoba.fb.app -- "My notes.md" "/path/to/folder"
 ```
 
-This leaves your documents and the native app unchanged. The server binary can
-remain installed for compatibility; running the app does not start it.
+Relative paths work, and multiple items open in separate windows. Quote paths
+containing spaces. Pass paths directly, without `--args`, so macOS delivers
+file-open events to the app.
+
+For a shorter `fb` command in macOS's default zsh shell, add this function to
+`~/.zshrc`, then open a new terminal or paste the function into your current
+shell:
+
+```sh
+fb() {
+  if [ "$#" -eq 0 ]; then
+    set -- .
+  fi
+  /usr/bin/open -b com.xoba.fb.app -- "$@"
+}
+```
+
+Then use `fb README.md`, `fb "My notes.md" /path/to/folder`, or just `fb` to open
+the current directory. This is an optional shell shortcut; the cask does not
+currently install an `fb` executable. The deprecated formula's `fb` executable
+starts the HTTP server, so follow the migration steps above first.
+
+No public URL scheme is registered. The `fb://` addresses used inside the app
+are private to its web view; use filesystem paths with `open` instead. If you
+have several development copies installed, select a specific app explicitly:
+
+```sh
+open -a "$HOME/Applications/fb.app" -- .
+```
 
 ### Command-line browser and service (deprecated)
 
