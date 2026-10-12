@@ -52,6 +52,10 @@ inside a SwiftUI/WebKit app. It does not start a web server or require Homebrew
 on the user's Mac. Finder drops and Open With read original files and folders
 in place; multiple dropped items open separate windows.
 
+Choose View → Zoom In, Zoom Out, or Actual Size (⌘0) to adjust document zoom.
+fb remembers your last chosen zoom level for new windows and future launches.
+Existing windows keep their current zoom until you change it there.
+
 Install the signed, notarized app:
 
 ```sh

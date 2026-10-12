@@ -181,14 +181,22 @@ private final class BrowserNavigationCheck: NSObject, WKNavigationDelegate {
     private let webView: WKWebView
     private let window: NSWindow
     private let fixtures: URL
+    private let preferencesName: String
+    private let preferences: UserDefaults
     private var cancelNextResponse = false
     private var finished: [WKNavigation] = []
     private var failures: [NSError] = []
 
     init(fixtures: URL, pandoc: String) throws {
         self.fixtures = fixtures
+        preferencesName = "fb-smoke-zoom-\(UUID().uuidString)"
+        guard let preferences = UserDefaults(suiteName: preferencesName) else {
+            throw FBError.message("Could not create isolated zoom preferences")
+        }
+        self.preferences = preferences
         engine = try FBEngine(pandoc: pandoc)
-        model = BrowserModel(fileURL: fixtures.appendingPathComponent("sample.md"), engine: engine)
+        model = BrowserModel(fileURL: fixtures.appendingPathComponent("sample.md"), engine: engine,
+                             preferences: preferences)
         guard let webView = model.webView else { throw FBError.message(model.errorMessage ?? "No browser view") }
         self.webView = webView
         window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 1000, height: 800),
@@ -244,10 +252,15 @@ private final class BrowserNavigationCheck: NSObject, WKNavigationDelegate {
             webView.stopLoading()
             (webView.configuration.urlSchemeHandler(forURLScheme: "fb") as? FBSchemeHandler)?.cancelAll()
             window.orderOut(nil)
+            preferences.removePersistentDomain(forName: preferencesName)
         }
         var passed: [String] = []
+        guard webView.pageZoom == 1 else { throw FBError.message("Fresh preferences did not default to actual size") }
         model.start()
         try await waitUntil("initial model navigation") { finished.count == 1 && !model.isLoading }
+        guard webView.pageZoom == 1 else { throw FBError.message("Initial navigation changed the default zoom") }
+        passed.append("fresh zoom defaults to actual size")
+        model.zoom(0.2)
         cancelNextResponse = true
         model.open(fixtures.appendingPathComponent("nested/next.md"))
         try await waitUntil("real policy interruption") {
@@ -272,6 +285,43 @@ private final class BrowserNavigationCheck: NSObject, WKNavigationDelegate {
         try await waitUntil("same-URL reload") { finished.count == 3 && !model.isLoading }
         guard model.errorMessage == nil else { throw FBError.message("A stale navigation left an error banner") }
         passed.append("same-URL reload ignores stale navigation failure")
+        guard abs(webView.pageZoom - 1.2) < 0.0001,
+              abs(preferences.double(forKey: "pageZoom") - 1.2) < 0.0001 else {
+            throw FBError.message("Zoom did not persist through navigation and reload")
+        }
+        passed.append("zoom survives navigation and reload")
+
+        // A separate model and preferences instance exercise the same restoration
+        // path used by a new window or the next app launch, before its first load.
+        guard let reopenedPreferences = UserDefaults(suiteName: preferencesName) else {
+            throw FBError.message("Could not reopen zoom preferences")
+        }
+        let reopened = BrowserModel(fileURL: fixtures.appendingPathComponent("sample.md"), engine: engine,
+                                    preferences: reopenedPreferences)
+        guard let reopenedView = reopened.webView, abs(reopenedView.pageZoom - 1.2) < 0.0001 else {
+            throw FBError.message("A new browser did not restore the saved zoom before loading")
+        }
+        window.contentView = reopenedView
+        defer {
+            reopenedView.stopLoading()
+            (reopenedView.configuration.urlSchemeHandler(forURLScheme: "fb") as? FBSchemeHandler)?.cancelAll()
+        }
+        reopened.start()
+        try await waitUntil("restored zoom navigation") { !reopened.isLoading }
+        let reopenedHeading = try await reopenedView.evaluateJavaScript("document.querySelector('h1')?.textContent") as? String
+        guard reopened.errorMessage == nil, reopenedHeading == "Embedded engine",
+              abs(reopenedView.pageZoom - 1.2) < 0.0001 else {
+            throw FBError.message("Restored zoom did not survive the new browser's first navigation")
+        }
+        passed.append("new browser restores saved zoom before its first document")
+        reopened.resetZoom()
+        let afterReset = BrowserModel(fileURL: fixtures, engine: engine, preferences: preferences)
+        guard reopenedView.pageZoom == 1, preferences.double(forKey: "pageZoom") == 1,
+              afterReset.webView?.pageZoom == 1, abs(webView.pageZoom - 1.2) < 0.0001 else {
+            throw FBError.message("Actual Size did not persist for new browsers while preserving existing windows")
+        }
+        passed.append("actual size persists without changing another open window")
+        window.contentView = webView
 
         // Remove this test-only engine to cause a real transport failure, rather than
         // an ordinary HTTP error page. The active navigation must still show an error.

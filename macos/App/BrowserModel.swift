@@ -20,9 +20,12 @@ final class BrowserModel: NSObject, WKNavigationDelegate, WKUIDelegate {
     private var initialURL: URL
     private var started = false
     private var activeNavigation: WKNavigation?
+    private let preferences: UserDefaults
+    private static let zoomPreferenceKey = "pageZoom"
 
-    init(fileURL: URL, engine suppliedEngine: FBEngine? = nil) {
+    init(fileURL: URL, engine suppliedEngine: FBEngine? = nil, preferences: UserDefaults = .standard) {
         initialURL = fileURL
+        self.preferences = preferences
         super.init()
         do {
             let pandoc = Bundle.main.bundleURL.appendingPathComponent("Contents/Helpers/pandoc").path
@@ -32,6 +35,8 @@ final class BrowserModel: NSObject, WKNavigationDelegate, WKUIDelegate {
             let configuration = WKWebViewConfiguration()
             handler.configure(configuration)
             let webView = FileDropWebView(frame: .zero, configuration: configuration)
+            // Restore before the first load, including windows opened by Finder or Terminal.
+            webView.pageZoom = Self.validZoom(preferences.object(forKey: Self.zoomPreferenceKey) as? Double ?? 1)
             webView.navigationDelegate = self
             webView.uiDelegate = self
             webView.allowsBackForwardNavigationGestures = true
@@ -64,7 +69,7 @@ final class BrowserModel: NSObject, WKNavigationDelegate, WKUIDelegate {
         handler?.prepareNavigation(to: destination)
         track(webView?.load(URLRequest(url: destination)))
         NSDocumentController.shared.noteNewRecentDocumentURL(url)
-        UserDefaults.standard.set(url.path, forKey: "lastOpenedPath")
+        preferences.set(url.path, forKey: "lastOpenedPath")
     }
 
     func chooseFiles() {
@@ -92,8 +97,23 @@ final class BrowserModel: NSObject, WKNavigationDelegate, WKUIDelegate {
         track(webView?.reload())
     }
     func reveal() { if let url = currentFileURL { NSWorkspace.shared.activateFileViewerSelecting([url]) } }
-    func zoom(_ amount: Double) { if let webView { webView.pageZoom = min(3, max(0.5, webView.pageZoom + amount)) } }
-    func resetZoom() { webView?.pageZoom = 1 }
+    func zoom(_ amount: Double) {
+        guard let webView else { return }
+        setZoom(webView.pageZoom + amount)
+    }
+    func resetZoom() { setZoom(1) }
+
+    private static func validZoom(_ value: Double) -> Double {
+        value.isFinite ? min(3, max(0.5, value)) : 1
+    }
+
+    private func setZoom(_ value: Double) {
+        guard let webView else { return }
+        let zoom = Self.validZoom(value)
+        webView.pageZoom = zoom
+        // Only explicit changes update the default; closing another window cannot overwrite it.
+        preferences.set(zoom, forKey: Self.zoomPreferenceKey)
+    }
 
     func find(backwards: Bool = false) {
         guard let webView, !findText.isEmpty else { return }
@@ -164,7 +184,7 @@ final class BrowserModel: NSObject, WKNavigationDelegate, WKUIDelegate {
         title = webView.title.flatMap { $0.isEmpty ? nil : $0 } ?? url.lastPathComponent
         webView.window?.representedURL = FBLocation.fileURL(webURL: url)
         if let fileURL = FBLocation.fileURL(webURL: url) {
-            UserDefaults.standard.set(fileURL.path, forKey: "lastOpenedPath")
+            preferences.set(fileURL.path, forKey: "lastOpenedPath")
         }
     }
 

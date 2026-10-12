@@ -108,6 +108,11 @@ The toolbar and menus provide Back/Forward, Reload, Reveal in Finder, Find
 Save a Copy writes only to a destination explicitly selected in the save panel.
 The most recent filesystem location is remembered across launches.
 
+View → Zoom In and Zoom Out adjust document zoom between 50% and 300%.
+Your last chosen level is saved for new windows and future launches; existing
+windows keep their current zoom. Actual Size (⌘0) resets the current window and
+the saved default to 100%.
+
 This direct-download build uses the current user's filesystem permissions and
 normal macOS privacy prompts. It is not a sandboxed Mac App Store build. Git
 annotations are optional and omitted when Git/developer tools are unavailable;
