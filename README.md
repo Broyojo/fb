@@ -8,7 +8,8 @@ and does not run a web server.
 **The standalone macOS app is the primary interface.** The older command-line
 HTTP server is deprecated and retained for compatibility. Its Go rendering
 code remains shared with the app; deprecating the server does not remove the
-viewers. The first notarized app download and Homebrew cask are in preparation.
+viewers. Download the [signed and notarized macOS release](https://github.com/xoba/fb/releases/latest)
+or install it through Homebrew Cask.
 
 - [Installing](#installing) · [Configuration](#configuration) · [Port fallback](#port-fallback)
 - [The one rule: navigations render, everything else is raw](#the-one-rule-navigations-render-everything-else-is-raw)
@@ -28,23 +29,33 @@ inside a SwiftUI/WebKit app. It does not start a web server or require Homebrew
 on the user's Mac. Finder drops and Open With read original files and folders
 in place; multiple dropped items open separate windows.
 
-Build, install, and open it locally:
+Install the signed, notarized app:
+
+```sh
+brew install --cask xoba/tap/fb
+```
+
+Or download the app ZIP from [GitHub Releases](https://github.com/xoba/fb/releases/latest)
+and move `fb.app` to your Applications folder. Homebrew is optional; the download
+contains everything needed for ordinary document viewing.
+
+To build, install, and open it from source:
 
 ```sh
 macos/Scripts/deploy.sh
 open ~/Applications/fb.app
 ```
 
-Building requires Xcode, XcodeGen, Go, and internet access to fetch the pinned
+Building requires Xcode, XcodeGen, Go, Python 3, and internet access to fetch the pinned
 Pandoc archive once. The installed app needs none of those build tools.
 Local builds use an available Apple Development identity; public distribution
 requires Developer ID signing and notarization. See the
 [Mac build and distribution instructions](macos/README.md).
 
-The planned public installation is `brew install --cask xoba/tap/fb`, backed
-by the same signed and notarized ZIP available directly from GitHub Releases.
-The cask is not published yet. See the [distribution workflow](macos/Distribution.md)
-for the release prerequisites and migration steps.
+The cask installs the same signed and notarized ZIP available from GitHub
+Releases. Update it with `brew upgrade --cask xoba/tap/fb`. Releases also include
+checksums, dependency notices, and Pandoc source materials. See the
+[distribution workflow](macos/Distribution.md) for release and migration steps.
 
 ### Migrating from the server
 

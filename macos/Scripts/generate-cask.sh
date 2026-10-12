@@ -106,6 +106,9 @@ xcrun stapler validate "$app_path"
 /usr/sbin/spctl --assess --type execute --verbose=2 "$app_path"
 
 sha256="$(/usr/bin/shasum -a 256 "$artifact" | /usr/bin/awk '{print $1}')"
+# Homebrew uses version interpolation to recognize a versioned download URL.
+version_reference='#{version}'
+cask_url="${release_url//$version/$version_reference}"
 cask_dir="$distribution_dir/casks/$version/Casks"
 mkdir -p "$cask_dir"
 cask_path="$cask_dir/fb.rb"
@@ -114,7 +117,7 @@ cask "fb" do
   version "$version"
   sha256 "$sha256"
 
-  url "$release_url"
+  url "$cask_url"
   name "fb"
   desc "Local file browser and document viewer"
   homepage "https://github.com/xoba/fb"

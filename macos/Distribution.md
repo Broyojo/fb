@@ -1,9 +1,12 @@
 # Homebrew Cask distribution
 
-The planned direct-download package is the signed, notarized ZIP containing the
-standalone app. A cask in `xoba/homebrew-tap/Casks/fb.rb` installs that app. It has
-no Homebrew Go, Pandoc, or server dependency. This workflow is prepared; adding
-the script does not make the app available through Homebrew yet.
+The direct-download package is the signed, notarized ZIP containing the
+standalone app. The cask in `xoba/homebrew-tap/Casks/fb.rb` installs that app. It
+has no Homebrew Go, Pandoc, or server dependency. Version 0.1.0 (build 2) is
+published at [mac-v0.1.0](https://github.com/xoba/fb/releases/tag/mac-v0.1.0), with
+checksums, dependency notices, and the Pandoc source distribution. Its uploaded
+bytes were verified, and the cask passed Homebrew style, online audit, and an
+installation test. This workflow describes how to prepare subsequent releases.
 
 ## Prepare a reviewable release
 
@@ -65,7 +68,7 @@ Homebrew's cask style/audit checks and test the install before committing the ta
 update. No script here publishes a GitHub release, creates a tag, or edits/pushes
 the tap automatically.
 
-Once published, installation is:
+Installation is:
 
 ```sh
 brew install --cask xoba/tap/fb
@@ -82,7 +85,7 @@ Use explicit `--cask` for installs/upgrades and `--formula` when removing the
 legacy command-line package. Retiring its launch agent/service is a separate
 migration step; the cask should not silently run service-changing shell hooks.
 
-## Remaining distribution requirements
+## Distribution requirements
 
 Developer ID signing and notarization must succeed before a cask is generated.
 An Apple Development signature used for local installation is insufficient for

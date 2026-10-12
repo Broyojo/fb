@@ -4,6 +4,16 @@ fb is a standalone local file browser for Apple Silicon Macs running macOS 26
 or later. It presents documents, source code, spreadsheets, databases, and
 archives in a readable interface.
 
+This release is version 0.1.0, build 2, signed with Developer ID and notarized
+by Apple. Install it with:
+
+```sh
+brew install --cask xoba/tap/fb
+```
+
+Or download `fb-0.1.0-arm64-notarized.zip` below. `SHA256SUMS` covers the app,
+dependency notices, and Pandoc source archive.
+
 - Open files and folders from Finder, the Desktop, Open With, or File → Open.
   Dropped items are opened at their original locations; multiple items open
   separate windows.

@@ -6,6 +6,9 @@ app as a C archive; the app does not launch an HTTP server or use localhost.
 Pandoc 3.12.1 is bundled as a private converter executable. End users need
 neither Homebrew nor a separate Pandoc installation.
 
+Install the [signed and notarized release](https://github.com/xoba/fb/releases/latest)
+directly, or run `brew install --cask xoba/tap/fb`.
+
 ## Build locally
 
 The developer machine needs Xcode, XcodeGen 2.44 or later, Python 3, and the Go
@@ -72,6 +75,11 @@ macos/Scripts/deploy.sh --notarized-app /absolute/path/to/notarized/fb.app
 This verifies the recorded Git revision, Developer ID signatures, stapled ticket,
 and Gatekeeper acceptance before installing it to the same location.
 
+An existing Dock shortcut from an older development build can retain a stale
+bookmark and show a placeholder after fb quits. Remove that shortcut from the
+Dock, open `~/Applications/fb.app`, and choose Options → Keep in Dock on its
+new icon. Removing the shortcut does not remove the app or documents.
+
 ## Opening files and folders
 
 Use File → Open (⌘O), Finder's Open With, or drop files and folders directly
@@ -108,8 +116,9 @@ window is required because WebKit defers media loading for unattached views.
 
 ## Signing and packaging
 
-The intended public channels are a notarized GitHub Release download and
-`brew install --cask xoba/tap/fb`. The cask is not published yet. See
+The public channels are a notarized GitHub Release download and
+`brew install --cask xoba/tap/fb`. Version 0.1.0 (build 2) is published as
+[`mac-v0.1.0`](https://github.com/xoba/fb/releases/tag/mac-v0.1.0). See
 [Distribution.md](Distribution.md) for the concrete release workflow and
 legacy-server migration. Local redeployment is separate from publication.
 
