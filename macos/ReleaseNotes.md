@@ -1,11 +1,17 @@
-# fb for macOS 0.1.0
+# fb for macOS 0.1.1
 
 fb is a standalone local file browser for Apple Silicon Macs running macOS 26
 or later. It presents documents, source code, spreadsheets, databases, and
 archives in a readable interface.
 
-This release is version 0.1.0, build 2, signed with Developer ID and notarized
-by Apple.
+Version 0.1.1 (build 3) remembers your document zoom between app launches.
+It is signed with Developer ID and notarized by Apple.
+
+- Choose View → Zoom In or Zoom Out. Your last chosen level is saved for new
+  windows and future launches, within the existing 50%–300% range.
+- Actual Size (⌘0) resets the current window and saved default to 100%.
+- Existing windows keep their own zoom until you change it there. Navigating
+  or reloading a document keeps that window's zoom.
 
 **Migrating from the old Homebrew server?** Stop its service and uninstall the
 formula before installing the app:
@@ -27,7 +33,14 @@ For a fresh installation, run only:
 brew install --cask xoba/tap/fb
 ```
 
-Or download `fb-0.1.0-arm64-notarized.zip` below. `SHA256SUMS` covers the app,
+If you already installed the app cask, update it with:
+
+```sh
+brew update
+brew upgrade --cask xoba/tap/fb
+```
+
+Or download `fb-0.1.1-arm64-notarized.zip` below. `SHA256SUMS` covers the app,
 dependency notices, and Pandoc source archive.
 
 - Open files and folders from Finder, the Desktop, Open With, or File → Open.
