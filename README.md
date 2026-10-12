@@ -1,5 +1,22 @@
 # fb
 
+## TL;DR
+
+The macOS file browser you always wished you had: browse folders and read
+Markdown, documents, code, and data in one app.
+
+Requires Apple Silicon and macOS 26 or later. Existing users of the old server
+should [stop and uninstall it first](#migrating-from-the-server).
+
+```sh
+brew install --cask xoba/tap/fb
+```
+
+The app is signed and notarized, with everything bundled. You can also
+[download it directly](https://github.com/xoba/fb/releases/latest).
+
+## About fb
+
 A local file browser that presents Markdown, office documents, notebooks,
 source code, spreadsheets, databases, and archives in a form meant for reading.
 The macOS app embeds the Go renderer and Pandoc, reads original files in place,
