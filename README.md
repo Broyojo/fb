@@ -1,5 +1,3 @@
-# fb
-
 ## TL;DR
 
 The macOS file browser you always wished you had: browse folders and read
