@@ -57,7 +57,7 @@ struct FBApp: App {
         if !revision.isEmpty { details += "\nSource \(revision)" }
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .center
-        NSApp.orderFrontStandardAboutPanel(options: [
+        var options: [NSApplication.AboutPanelOptionKey: Any] = [
             .applicationName: "fb",
             .applicationVersion: version,
             .version: build,
@@ -66,7 +66,11 @@ struct FBApp: App {
                 .foregroundColor: NSColor.secondaryLabelColor,
                 .paragraphStyle: paragraph
             ])
-        ])
+        ]
+        if let icon = NSImage(contentsOf: bundle.bundleURL.appendingPathComponent("Contents/Resources/AppIcon.icns")) {
+            options[.applicationIcon] = icon
+        }
+        NSApp.orderFrontStandardAboutPanel(options: options)
     }
 }
 
@@ -120,6 +124,14 @@ final class ApplicationCoordinator {
 
 @MainActor
 final class FBAppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        // A local reinstall can retain Launch Services' previous placeholder.
+        // Use the current bundle's artwork for the Dock and standard About panel.
+        if let icon = NSImage(contentsOf: Bundle.main.bundleURL.appendingPathComponent("Contents/Resources/AppIcon.icns")) {
+            NSApp.applicationIconImage = icon
+        }
+    }
+
     func application(_ application: NSApplication, open urls: [URL]) {
         ApplicationCoordinator.shared.openExternal(urls)
     }
