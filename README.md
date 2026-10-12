@@ -3,7 +3,7 @@
 ## TL;DR
 
 The macOS file browser you always wished you had: browse folders and read
-Markdown, documents, code, and data in one app.
+Markdown, documents, code, and data without changing the originals.
 
 Requires Apple Silicon and macOS 26 or later. Existing users of the old server
 should [stop and uninstall it first](#migrating-from-the-server).
@@ -21,6 +21,16 @@ A local file browser that presents Markdown, office documents, notebooks,
 source code, spreadsheets, databases, and archives in a form meant for reading.
 The macOS app embeds the Go renderer and Pandoc, reads original files in place,
 and does not run a web server.
+
+**Browsing is read-only.** Opening files, navigating folders, and running SQL
+queries do not edit, move, rename, or delete your originals. Dragging a file or
+folder into fb simply opens it at its existing location; it changes what you
+are viewing, without importing or moving the item.
+
+fb saves app preferences, such as zoom and the last opened location, and may
+create temporary files for rendering and conversion. **Save a Copy** is an
+explicit write to the destination you choose and can replace an existing file
+there.
 
 **The standalone macOS app is the primary interface.** The older command-line
 HTTP server is deprecated and retained for compatibility. Its Go rendering
@@ -279,10 +289,13 @@ the page as frozen at navigation time — stale git annotations and all —
 ignoring the server's no-store headers. Media player pages are exempt,
 so Back onto a video or audio page keeps its playback position.
 
-Browsing is read-only: fb never modifies or deletes the originals it displays.
+Browsing is read-only: fb does not edit, move, rename, or delete the originals
+it displays.
 Format-conversion caches and temporary database copies live in scratch space;
 even git is invoked with `--no-optional-locks` so browsing leaves repositories
-untouched. The native app's Save a Copy writes only to your chosen destination.
+untouched. The native app saves preferences such as zoom and the last opened
+location. Save a Copy writes only to your chosen destination and can replace
+an existing file there.
 The legacy browser also uses scratch copies for file uploads.
 
 Editor backup files get the same treatment as their base file: a trailing
@@ -519,10 +532,12 @@ And filenames with special roles inside directory listings:
 
 ## Drag and drop
 
-In the macOS app, Finder/Desktop drops use original filesystem URLs. Files and
-folders open in place without uploads or copies; multiple items open separate
-windows. The following scratch-copy behavior applies only to the deprecated
-web-browser version.
+In the macOS app, dragging in a file or folder is a navigation action: it opens
+that item for viewing at its existing location. Finder/Desktop drops use
+original filesystem URLs, without uploading, importing, moving, or editing the
+items. The first item opens in the current window; additional items open in
+separate windows. Rendering may use temporary conversion files. The following
+scratch-copy behavior applies only to the deprecated web-browser version.
 
 Drop any file from Finder onto any rendered page and it opens as if you
 had clicked it: the file is uploaded to a per-session scratch area

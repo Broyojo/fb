@@ -6,6 +6,11 @@ app as a C archive; the app does not launch an HTTP server or use localhost.
 Pandoc 3.12.1 is bundled as a private converter executable. End users need
 neither Homebrew nor a separate Pandoc installation.
 
+**Browsing is read-only:** opening files, navigating folders, and running SQL
+queries do not edit, move, rename, or delete your originals. Dropping a file or
+folder into the app changes what you are viewing and opens the original in
+place.
+
 Existing server users should first follow the
 [stop/uninstall migration steps](../README.md#migrating-from-the-server).
 For a fresh installation, download the
@@ -98,14 +103,17 @@ Multiple paths and paths containing spaces are supported. See
 not ship a CLI executable, and the app has no public URL scheme.
 
 Use File → Open (⌘O), Finder's Open With, or drop files and folders directly
-onto the document view. The first dropped item opens in the current window;
-additional items open in separate windows. These actions use the original
-filesystem URLs and never upload or copy the dropped documents. Conversion
-caches may use temporary files. Browsing and SQL queries remain read-only.
+onto the document view. Dropping items is navigation: the first opens in the
+current window, and additional items open in separate windows. The app uses
+the original filesystem URLs without uploading, importing, moving, or editing
+the items. Browsing and SQL queries remain read-only. Rendering and conversion
+may create temporary files, and the app saves preferences such as zoom and the
+last opened location.
 
 The toolbar and menus provide Back/Forward, Reload, Reveal in Finder, Find
 (⌘F), zoom, and Save a Copy (⇧⌘S). External links open in the default browser.
-Save a Copy writes only to a destination explicitly selected in the save panel.
+Save a Copy writes only to a destination explicitly selected in the save panel
+and can replace an existing file there.
 The most recent filesystem location is remembered across launches.
 
 View → Zoom In and Zoom Out adjust document zoom between 50% and 300%.
