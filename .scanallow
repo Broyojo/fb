@@ -8,3 +8,6 @@
 # The author's home directory, mentioned in a comment of the original
 # launcher script ("md", deleted May 2024); survives only in old commits.
 ^/Users/mra$
+
+# Standard Retina icon asset filenames resemble email addresses to the sweep.
+^icon_(16x16|32x32|128x128|256x256|512x512)@2x\.png$

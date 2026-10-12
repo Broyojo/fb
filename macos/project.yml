@@ -1,0 +1,51 @@
+name: FB
+options:
+  minimumXcodeGenVersion: 2.44.0
+  deploymentTarget:
+    macOS: "26.0"
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "26.0"
+    ARCHS: arm64
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: "-"
+    ENABLE_HARDENED_RUNTIME: YES
+    ENABLE_APP_SANDBOX: NO
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: 1
+    FB_BUILD_REVISION: local
+targets:
+  FB:
+    type: application
+    platform: macOS
+    sources:
+      - path: App
+      - path: Dependencies
+        type: folder
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_NAME: fb
+        PRODUCT_BUNDLE_IDENTIFIER: com.xoba.fb.app
+        INFOPLIST_FILE: App/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        SWIFT_OBJC_BRIDGING_HEADER: App/FB-Bridging-Header.h
+        HEADER_SEARCH_PATHS: "$(inherited) $(SRCROOT)/.build/engine"
+        LIBRARY_SEARCH_PATHS: "$(inherited) $(SRCROOT)/.build/engine"
+        OTHER_LDFLAGS: "$(inherited) -lfb -lresolv -lpthread -framework CoreFoundation -framework Security"
+    postBuildScripts:
+      - name: Embed pinned Pandoc
+        script: '"${SRCROOT}/Scripts/embed-pandoc.sh"'
+        basedOnDependencyAnalysis: false
+schemes:
+  FB:
+    build:
+      targets:
+        FB: all
+    run:
+      config: Debug
+    archive:
+      config: Release

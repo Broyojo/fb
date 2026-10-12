@@ -13,6 +13,7 @@ import (
 	"image"
 	"image/png"
 	"io"
+	"mime"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -373,6 +374,41 @@ func TestRawQueryServesSourceVerbatim(t *testing.T) {
 	}
 	if got := rec.Body.String(); got != src {
 		t.Fatalf("body = %q, want verbatim source", got)
+	}
+}
+
+func TestRawMarkdownIncludesArchiveMembers(t *testing.T) {
+	root := t.TempDir()
+	source := []byte("# Keep the original\n\n**Markdown**, not generated HTML.\n")
+	if err := os.WriteFile(filepath.Join(root, "note.md"), source, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	var archive bytes.Buffer
+	zw := zip.NewWriter(&archive)
+	member, err := zw.Create("note.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := member.Write(source); err != nil {
+		t.Fatal(err)
+	}
+	if err := zw.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(root, "notes.zip"), archive.Bytes(), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	server := fileServer{fsys: os.DirFS(root), pandoc: "must-not-run"}
+	for _, path := range []string{"/note.md?raw=1", "/notes.zip/note.md?raw=1"} {
+		t.Run(path, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, path, nil)
+			req.Header.Set("Accept", "text/html")
+			rec := httptest.NewRecorder()
+			server.ServeHTTP(rec, req)
+			if rec.Code != http.StatusOK || !bytes.Equal(rec.Body.Bytes(), source) {
+				t.Fatalf("raw Markdown response: status=%d body=%q", rec.Code, rec.Body.String())
+			}
+		})
 	}
 }
 
@@ -2604,47 +2640,6 @@ func TestGitDirectoryShowsStats(t *testing.T) {
 	}
 }
 
-func TestPagesLinkHealthzAndVersion(t *testing.T) {
-	root := t.TempDir()
-	if err := os.WriteFile(filepath.Join(root, "code.go"), []byte("package x\n"), 0o644); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(root, "data.csv"), []byte("a,b\n1,2\n"), 0o644); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(root, "notes.md"), []byte("# hi\n"), 0o644); err != nil {
-		t.Fatal(err)
-	}
-	server := fileServer{fsys: os.DirFS(root), pandoc: fakePandoc(t), dir: root}
-
-	for _, url := range []string{"/", "/code.go", "/data.csv"} {
-		req := httptest.NewRequest(http.MethodGet, url, nil)
-		req.Header.Set("Sec-Fetch-Dest", "document")
-		rec := httptest.NewRecorder()
-		server.ServeHTTP(rec, req)
-		if rec.Code != http.StatusOK {
-			t.Errorf("%s: status = %d, want %d", url, rec.Code, http.StatusOK)
-			continue
-		}
-		body := rec.Body.String()
-		if !strings.Contains(body, "/_fb/healthz") || !strings.Contains(body, "/_fb/version") {
-			t.Errorf("%s lacks the healthz/version footer", url)
-		}
-	}
-
-	// Markdown pages render without the footer.
-	req := httptest.NewRequest(http.MethodGet, "/notes.md", nil)
-	req.Header.Set("Sec-Fetch-Dest", "document")
-	rec := httptest.NewRecorder()
-	server.ServeHTTP(rec, req)
-	if rec.Code != http.StatusOK {
-		t.Fatalf("/notes.md: status = %d, want %d", rec.Code, http.StatusOK)
-	}
-	if body := rec.Body.String(); strings.Contains(body, "/_fb/healthz") || strings.Contains(body, "/_fb/version") {
-		t.Error("/notes.md unexpectedly has the healthz/version footer")
-	}
-}
-
 func TestHealthzEndpoint(t *testing.T) {
 	server := fileServer{fsys: os.DirFS(t.TempDir()), pandoc: "unused"}
 
@@ -3413,6 +3408,56 @@ func TestServeRawSandboxesActiveTypes(t *testing.T) {
 	}
 	if ct := rec.Header().Get("Content-Type"); !strings.HasPrefix(ct, "text/plain") {
 		t.Errorf("plain.txt Content-Type = %q, want text/plain", ct)
+	}
+}
+
+func TestRawBackupsDoNotBecomeActiveHTML(t *testing.T) {
+	root := t.TempDir()
+	source := []byte("<!doctype html><script>window.fbUnsafeScriptExecuted = true</script>")
+	var archive bytes.Buffer
+	zw := zip.NewWriter(&archive)
+	for _, name := range []string{"payload.txt~", "payload.md~"} {
+		if err := os.WriteFile(filepath.Join(root, name), source, 0600); err != nil {
+			t.Fatal(err)
+		}
+		member, err := zw.Create(name)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := member.Write(source); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := zw.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(root, "backups.zip"), archive.Bytes(), 0600); err != nil {
+		t.Fatal(err)
+	}
+	server := fileServer{fsys: os.DirFS(root), pandoc: "must-not-run"}
+	for _, prefix := range []string{"/", "/backups.zip/"} {
+		for _, name := range []string{"payload.txt~", "payload.md~"} {
+			t.Run(prefix+name, func(t *testing.T) {
+				req := httptest.NewRequest(http.MethodGet, prefix+name+"?raw=1", nil)
+				req.Header.Set("Sec-Fetch-Dest", "document")
+				rec := httptest.NewRecorder()
+				server.ServeHTTP(rec, req)
+				if rec.Code != http.StatusOK || !bytes.Equal(rec.Body.Bytes(), source) {
+					t.Fatalf("raw backup response: status=%d body=%q", rec.Code, rec.Body.String())
+				}
+				ctype := rec.Header().Get("Content-Type")
+				if ctype == "" || activeContentType(ctype) {
+					t.Errorf("raw backup has unsafe Content-Type %q", ctype)
+				}
+				if strings.HasSuffix(name, ".txt~") && !strings.HasPrefix(ctype, "text/plain") {
+					t.Errorf("plain text backup Content-Type=%q, want text/plain", ctype)
+				}
+				_, disposition, err := mime.ParseMediaType(rec.Header().Get("Content-Disposition"))
+				if err != nil || disposition["filename"] != name {
+					t.Errorf("download filename changed: header=%q", rec.Header().Get("Content-Disposition"))
+				}
+			})
+		}
 	}
 }
 

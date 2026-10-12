@@ -532,12 +532,14 @@ func (s fileServer) route(w http.ResponseWriter, r *http.Request, name string, d
 	}
 
 	ext := strings.ToLower(path.Ext(viewName(name)))
-	browserView := r.URL.Query().Get("raw") != "1" && wantsDocument(r.Header)
+	raw := r.URL.Query().Get("raw") == "1"
+	browserView := !raw && wantsDocument(r.Header)
 
 	// Markdown renders for every client (the server's original purpose);
 	// other pandoc-supported documents render only on browser navigation so
-	// curl and scripts still get the original bytes.
-	if format, ok := pandocFormats[ext]; ok && (ext == ".md" || browserView) {
+	// curl and scripts still get the original bytes. An explicit raw request
+	// also bypasses Markdown conversion (including Save a Copy in the Mac app).
+	if format, ok := pandocFormats[ext]; ok && !raw && (ext == ".md" || browserView) {
 		s.serveDocument(w, r, name, info, format)
 		return
 	}
@@ -878,6 +880,13 @@ func (s fileServer) serveRaw(w http.ResponseWriter, r *http.Request, name string
 	// report) renders, while its scripts never run on fb's origin — where
 	// they could read every served file.
 	extType := mime.TypeByExtension(strings.ToLower(path.Ext(viewName(name))))
+	if extType != "" && w.Header().Get("Content-Type") == "" {
+		// Match the logical type used by the security policy below. In
+		// particular, ServeContent must not re-sniff a backup such as .txt~
+		// as HTML merely because its literal filename has an unknown suffix.
+		// Preserve explicit types set by viewers that fall back to plain text.
+		w.Header().Set("Content-Type", extType)
+	}
 	if activeContentType(extType) {
 		w.Header().Set("Content-Security-Policy", "sandbox; frame-ancestors 'none'")
 	}
@@ -7397,6 +7406,22 @@ func gitCommand(ctx context.Context, args ...string) *exec.Cmd {
 	return cmd
 }
 
+// Apple's /usr/bin/git is a launcher that can offer to install developer tools.
+// Optional repository annotations must never trigger that installer while a
+// user browses files on a Mac without Xcode or Command Line Tools.
+func gitAvailable(ctx context.Context) bool {
+	git, err := exec.LookPath("git")
+	if err != nil {
+		return false
+	}
+	if runtime.GOOS == "darwin" && git == "/usr/bin/git" {
+		ctx, cancel := context.WithTimeout(ctx, time.Second)
+		defer cancel()
+		return exec.CommandContext(ctx, "/usr/bin/xcode-select", "-p").Run() == nil
+	}
+	return true
+}
+
 // gitOutput runs one git command against a repository directory and returns
 // its trimmed stdout.
 func gitOutput(ctx context.Context, gitDir string, args ...string) (string, error) {
@@ -7421,7 +7446,7 @@ func countNoun(n int64, singular, plural string) string {
 // the most recent commits. Each probe degrades independently, so a bare,
 // empty, or odd repository still shows whatever applies.
 func gitSection(ctx context.Context, gitDir string) *gitView {
-	if _, err := exec.LookPath("git"); err != nil {
+	if !gitAvailable(ctx) {
 		return nil
 	}
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
@@ -7603,7 +7628,7 @@ func (s fileServer) worktreeStatusFor(ctx context.Context, name string) *worktre
 	if root == "" {
 		return nil
 	}
-	if _, err := exec.LookPath("git"); err != nil {
+	if !gitAvailable(ctx) {
 		return nil
 	}
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
@@ -8127,15 +8152,11 @@ addEventListener("pageshow", function (e) {
 // copy, which renders through the ordinary pipeline like any other file; a
 // folder is never uploaded — the cd endpoint locates it on disk and the
 // browser navigates to its listing.
-// pageFooter links the health and version probes from the bottom of every
-// rendered page except markdown documents, which stay clean. Inline styles
-// keep it self-contained, so templates and pandoc output can append it
-// without touching their own CSS.
-const pageFooter = `<footer style="margin-top:3rem;padding-top:0.5rem;border-top:1px solid #eaeef0;font-size:0.75rem;color:#8c959f"><a style="color:#8c959f" href="/` + assetPrefix + `/healthz">healthz</a> &middot; <a style="color:#8c959f" href="/` + assetPrefix + `/version">version</a></footer>
-`
 
 var dropJS = `<script>
 (function () {
+  // The Mac app receives original file URLs through native Finder drops.
+  if (location.protocol === "fb:") return;
   var maxDrop = ` + strconv.Itoa(maxDropBytes) + `;
   var maxChildren = ` + strconv.Itoa(maxCdChildren) + `;
   var box, msg, bar;

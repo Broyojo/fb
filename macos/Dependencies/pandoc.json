@@ -1,0 +1,15 @@
+{
+  "version": "3.12.1",
+  "architecture": "arm64",
+  "archive": "pandoc-3.12.1-arm64-macOS.zip",
+  "url": "https://github.com/jgm/pandoc/releases/download/3.12.1/pandoc-3.12.1-arm64-macOS.zip",
+  "sha256": "c2146cf33a583f3ac93eccddf1bb662371d5cfcce1aad1c87ad860cca1435d46",
+  "executable": "pandoc-3.12.1-arm64/bin/pandoc",
+  "release": "https://github.com/jgm/pandoc/releases/tag/3.12.1",
+  "source": "https://github.com/jgm/pandoc/tree/3.12.1",
+  "sourceArchive": "https://github.com/jgm/pandoc/archive/refs/tags/3.12.1.tar.gz",
+  "license": "GPL-2.0-or-later",
+  "copyright": "Copyright (c) 2006-2024 John MacFarlane",
+  "upstreamSigningTeam": "5U2WKE6DES",
+  "checksumProvenance": "GitHub release asset digest from https://api.github.com/repos/jgm/pandoc/releases/tags/3.12.1, retrieved 2026-10-12"
+}

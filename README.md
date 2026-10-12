@@ -30,6 +30,29 @@ or serve a narrow root you don't mind sharing.
 
 ## Installing
 
+### macOS app
+
+The native app in [`macos/`](macos/README.md) runs on Apple Silicon with
+macOS 26 or later. It embeds the same Go rendering engine and a pinned Pandoc
+inside a SwiftUI/WebKit app. It does not start a web server or require Homebrew
+on the user's Mac. Finder drops and Open With read original files and folders
+in place; multiple dropped items open separate windows.
+
+Build, install, and open it locally:
+
+```sh
+macos/Scripts/deploy.sh
+open ~/Applications/fb.app
+```
+
+Building requires Xcode, XcodeGen, Go, and internet access to fetch the pinned
+Pandoc archive once. The installed app needs none of those build tools.
+Local builds use an available Apple Development identity; public distribution
+requires Developer ID signing and notarization. See the
+[Mac build and distribution instructions](macos/README.md).
+
+### Command-line browser and service
+
 ```
 brew install xoba/tap/fb    # installs pandoc alongside
 brew services start fb      # serve your home directory, starting at login

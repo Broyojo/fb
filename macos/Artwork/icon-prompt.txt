@@ -1,0 +1,7 @@
+Use case: logo-brand
+Asset type: production macOS application icon for fb, a local file and Markdown browser.
+Primary request: design a beautiful, distinctive, legible macOS app icon: a softly sculpted blue folder holding one ivory document with a folded upper corner and three simple dark blue horizontal strokes suggesting readable text.
+Style: precise contemporary macOS desktop icon, restrained dimensional depth, satin ceramic and softly frosted material, polished but calm, one coherent object, clean silhouette.
+Composition: centered front-facing folder and document, a little perspective and layered depth; very large simple shapes that remain recognizable at 32 pixels. A rounded square deep navy tile with subtly luminous edges behind the folder; tile occupies approximately 82 percent of the square canvas with equal transparent margins. Keep the document safely inside the tile.
+Lighting: soft studio light from upper left, gentle highlights and natural soft contact shadows, excellent contrast.
+Constraints: transparent background outside the rounded square tile. One icon only, no mockup, no grid, no surrounding UI, no letters, no logos, no fine details, no watermark. Do not show a desktop, dock, or a computer. 1024 by 1024 pixels.
