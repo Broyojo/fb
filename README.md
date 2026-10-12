@@ -1,24 +1,14 @@
 # fb
 
-A local file browser for `http://localhost:3030` that renders files as
-readable HTML instead of making you download them. Point it at a directory
-(your home directory by default) and everything under it becomes browsable,
-with Markdown, office documents, notebooks, source code, spreadsheets,
-databases, and archives all displayed in a form meant for reading.
+A local file browser that presents Markdown, office documents, notebooks,
+source code, spreadsheets, databases, and archives in a form meant for reading.
+The macOS app embeds the Go renderer and Pandoc, reads original files in place,
+and does not run a web server.
 
-The server listens only on loopback, on port 3030 by default — see
-[Configuration](#configuration) for changing that, and note that a taken
-port moves the server to the next free one. Requires `pandoc` on the
-PATH; everything else is compiled in.
-
-**Loopback is the only access control: fb has no accounts, no tokens, no
-passwords.** Anything that can open a connection to the port can read
-everything being served. On a single-user machine that's you and your
-browser (other machines on the network can't reach it, and websites you
-visit are blocked by the hardening described under
-[How it works](#how-it-works-generally)). On a **shared machine every
-other local user can read your files through it** — don't run fb there,
-or serve a narrow root you don't mind sharing.
+**The standalone macOS app is the primary interface.** The older command-line
+HTTP server is deprecated and retained for compatibility. Its Go rendering
+code remains shared with the app; deprecating the server does not remove the
+viewers. The first notarized app download and Homebrew cask are in preparation.
 
 - [Installing](#installing) · [Configuration](#configuration) · [Port fallback](#port-fallback)
 - [The one rule: navigations render, everything else is raw](#the-one-rule-navigations-render-everything-else-is-raw)
@@ -51,7 +41,32 @@ Local builds use an available Apple Development identity; public distribution
 requires Developer ID signing and notarization. See the
 [Mac build and distribution instructions](macos/README.md).
 
-### Command-line browser and service
+The planned public installation is `brew install --cask xoba/tap/fb`, backed
+by the same signed and notarized ZIP available directly from GitHub Releases.
+The cask is not published yet. See the [distribution workflow](macos/Distribution.md)
+for the release prerequisites and migration steps.
+
+### Migrating from the server
+
+The app needs no running server. Stop the Homebrew service if installed:
+
+```sh
+brew services stop fb
+```
+
+If the server was installed from this checkout, remove its login service:
+
+```sh
+./service.sh uninstall
+```
+
+This leaves your documents and the native app unchanged. The server binary can
+remain installed for compatibility; running the app does not start it.
+
+### Command-line browser and service (deprecated)
+
+These instructions are for existing server users. New macOS installations
+should use the native app above.
 
 ```
 brew install xoba/tap/fb    # installs pandoc alongside
@@ -76,9 +91,15 @@ to serve a different root — `fb /` makes the whole filesystem browsable.
 `fb -open ~/some/project` also opens your browser there, on whatever
 port was actually bound.
 
+The legacy server listens only on loopback, on port 3030 by default. It requires
+`pandoc` on PATH. **Loopback is its only access control: it has no accounts,
+tokens, or passwords.** Other local users on a shared machine can read the
+served files; use the native app instead or serve a narrow root. The native
+app opens no listening port and uses the current user's filesystem permissions.
+
 ### Configuration
 
-An optional config file sets what flags otherwise would — and it's the
+For the legacy server, an optional config file sets what flags otherwise would — and it's the
 way to configure the brew service, which can't take flags. It lives at
 `~/.config/fb/config` (`$XDG_CONFIG_HOME/fb/config` if that's set):
 
@@ -99,7 +120,7 @@ brew services restart fb
 
 ### Port fallback
 
-If the chosen port is already taken — by another fb, or anything else —
+For the legacy server, if the chosen port is already taken — by another fb, or anything else —
 fb serves on the next free port instead of failing: 3031, then 3032, and
 so on. So if `localhost:3030` shows something unexpected (or nothing),
 try the next few ports, or check the log, where fb names the port it
@@ -110,22 +131,28 @@ logs to `~/Library/Logs/fb.log`.
 ## Developing
 
 ```
-./run.sh            # go run, serving / (the whole filesystem)
-./run.sh ~/notes    # serve a narrower root
-./release.sh        # gate, tag, push, deploy, and publish to the brew tap
+macos/Scripts/deploy.sh  # build and install the latest native app
+macos/Scripts/smoke-test.sh
+go test ./...
+go test -race -tags fbmac ./...
 ```
 
-`release.sh` runs the whole release: it refuses on a dirty tree or
-failing tests/scan, tags (bare runs propose the next patch and confirm;
-`patch|minor|major|vX.Y.Z` skip the prompt; a HEAD already tagged is
-republished idempotently), pushes both remotes, redeploys the local
-service, updates the tap formula's url and sha256, and verifies with a
-real `brew upgrade`.
+Native distribution follows [the macOS release workflow](macos/Distribution.md).
+The old server scripts remain available for explicit compatibility work:
 
-## Running as a service from source
+```sh
+./run.sh ~/notes
+./release.sh --legacy-server -n patch  # preview an explicit legacy release
+```
 
-`run.sh` runs the server in the foreground; for something that is always
-there when you're logged in, install it as a macOS LaunchAgent instead:
+`release.sh` requires `--legacy-server`; it is not the app release command.
+It gates on a clean tree and tests/scans, tags and pushes a legacy version,
+and updates the Homebrew formula. It never starts or redeploys a local server.
+
+## Running as a service from source (deprecated)
+
+For existing server users, `run.sh` runs in the foreground and `service.sh`
+manages the old login LaunchAgent. The native app needs neither:
 
 ```
 ./service.sh install     # build, install the LaunchAgent, and start
@@ -165,8 +192,8 @@ preferring `text/html`). All other requests get the original bytes untouched:
 - `?raw=1` forces the original bytes even in a browser; rendered pages have
   a `raw` link in the top-right corner for exactly this.
 
-The exception is Markdown, which renders for every client — serving `.md`
-files as HTML is the program's original purpose.
+The exception is Markdown, which renders for every client unless `?raw=1`
+explicitly requests its source.
 
 Freshness also applies going backwards: a page restored from the
 browser's back/forward cache reloads itself, since that cache resurrects
@@ -174,11 +201,11 @@ the page as frozen at navigation time — stale git annotations and all —
 ignoring the server's no-store headers. Media player pages are exempt,
 so Back onto a video or audio page keeps its playback position.
 
-And it's all strictly read-only: fb never modifies or deletes anything
-it serves. Its only writes are its own scratch copies — drag-and-drop
-uploads, format-conversion caches, temporary database copies — made in
-the system temp directory, never in your tree; even git is invoked with
-`--no-optional-locks` so browsing leaves repositories untouched.
+Browsing is read-only: fb never modifies or deletes the originals it displays.
+Format-conversion caches and temporary database copies live in scratch space;
+even git is invoked with `--no-optional-locks` so browsing leaves repositories
+untouched. The native app's Save a Copy writes only to your chosen destination.
+The legacy browser also uses scratch copies for file uploads.
 
 Editor backup files get the same treatment as their base file: a trailing
 `~` is ignored for type detection, so `README.md~` renders like
@@ -414,6 +441,11 @@ And filenames with special roles inside directory listings:
 
 ## Drag and drop
 
+In the macOS app, Finder/Desktop drops use original filesystem URLs. Files and
+folders open in place without uploads or copies; multiple items open separate
+windows. The following scratch-copy behavior applies only to the deprecated
+web-browser version.
+
 Drop any file from Finder onto any rendered page and it opens as if you
 had clicked it: the file is uploaded to a per-session scratch area
 (browsers deliberately hide the original path from pages, so the server
@@ -505,7 +537,7 @@ without `git` on the PATH, listings render plainly and nothing breaks.
 
 ## How it works, generally
 
-One Go binary (`main.go`) built around a single abstraction: a `fileServer`
+The Go rendering engine is built around a single abstraction: a `fileServer`
 that serves any `fs.FS`. The real filesystem is `os.OpenRoot(root).FS()` —
 a root-confined filesystem, so a symlink inside the tree cannot point
 browsing at files outside it; opening an archive produces another `fs.FS`
@@ -513,6 +545,10 @@ browsing at files outside it; opening an archive produces another `fs.FS`
 `fileServer` mounted at the archive's URL path — that is the entire
 archive-browsing feature. Markdown is piped to pandoc over stdin, so
 rendering works identically no matter which filesystem a file lives in.
+
+The macOS app links this engine into its process and routes WebKit's `fb:`
+requests through the in-memory bridge in `desktop_engine.go`. It never calls
+the legacy CLI's listener startup. Only the deprecated server exposes HTTP.
 
 Request dispatch lives in one `route` function: stat the path; directories
 get listings; then, by extension, pandoc documents, table views, syntax

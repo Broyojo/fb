@@ -2,14 +2,15 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-# Release fb: gate, tag, push both remotes, redeploy the dev service, and
-# publish the new version to the Homebrew tap.
+# Release the deprecated fb server: gate, tag, push both remotes, and
+# publish the legacy formula. Native app releases use macos/Distribution.md.
+# This command never starts or redeploys a local server.
 #
 # Usage:
-#   ./release.sh                     propose the next patch version, confirm, go
-#   ./release.sh patch|minor|major   bump from the latest tag, no prompt
-#   ./release.sh v1.2.3              release exactly this version
-#   ./release.sh -n [...]            dry run: print the plan, change nothing
+#   ./release.sh --legacy-server                     propose a patch, confirm
+#   ./release.sh --legacy-server patch|minor|major   bump, no prompt
+#   ./release.sh --legacy-server v1.2.3              release an exact version
+#   ./release.sh --legacy-server -n [...]            dry run
 #
 # If HEAD already carries a version tag, no new tag is created: the script
 # republishes that version (idempotent re-run after a partial failure). A
@@ -23,6 +24,18 @@ cd "$(dirname "$0")"
 
 TAP="$HOME/homebrew-tap"
 FORMULA="$TAP/Formula/fb.rb"
+
+if [[ "${1:-}" == --help || "${1:-}" == -h ]]; then
+    grep '^#   ' "$0" | sed 's/^#   //'
+    exit 0
+fi
+if [[ "${1:-}" != --legacy-server ]]; then
+    echo 'The backend-server release workflow is deprecated.' >&2
+    echo 'For the macOS app, see macos/Distribution.md; for a local install, run macos/Scripts/deploy.sh.' >&2
+    echo 'An intentional legacy server release requires: ./release.sh --legacy-server [VERSION]' >&2
+    exit 2
+fi
+shift
 
 dry=0
 if [[ "${1:-}" == "-n" || "${1:-}" == "--dry-run" ]]; then
@@ -109,9 +122,6 @@ run git push origin main
 run git push github main
 run git push origin "$version"
 run git push github "$version"
-
-echo "== redeploying dev service"
-run ./service.sh redeploy
 
 echo "== publishing $version to the tap"
 url="https://github.com/xoba/fb/archive/refs/tags/$version.tar.gz"

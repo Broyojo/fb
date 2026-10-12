@@ -1,5 +1,6 @@
 #!/usr/bin/env swift
 import AppKit
+import CoreServices
 import Foundation
 
 struct DeployFailure: LocalizedError {
@@ -86,6 +87,14 @@ do {
         try fileManager.moveItem(at: stagedApp, to: destination)
         installedNew = true
         try checkBundle(destination)
+        // ditto preserves the old outer bundle timestamp. Refresh it and force
+        // Launch Services to reread this exact installed bundle, including its
+        // icon, even when a development build reused the same bundle version.
+        try fileManager.setAttributes([.modificationDate: Date()], ofItemAtPath: destination.path)
+        let registrationStatus = LSRegisterURL(destination as CFURL, true)
+        guard registrationStatus == noErr else {
+            throw DeployFailure(message: "Launch Services could not register the installed app (\(registrationStatus)).")
+        }
     } catch {
         let installationError = error
         do {

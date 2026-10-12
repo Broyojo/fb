@@ -2,7 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-# Manage fb as a macOS LaunchAgent: a per-user service that starts at
+# Manage the deprecated fb server as a macOS LaunchAgent: a per-user service that starts at
 # login, restarts if it crashes, and can be stopped/started/redeployed at
 # will. Logs go to ~/Library/Logs/fb.log.
 #
@@ -26,6 +26,12 @@ REPO="$PWD"
 BIN="$REPO/fb"
 LOG="$HOME/Library/Logs/fb.log"
 ROOT="${FB_ROOT:-/}"
+
+case "${1:-}" in
+install|start|restart|redeploy)
+    echo 'The HTTP server is deprecated. The macOS app needs no server; see macos/README.md.' >&2
+    ;;
+esac
 
 build() {
     # Build to a temp name and rename over, so a running binary is replaced

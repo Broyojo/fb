@@ -95,6 +95,11 @@ window is required because WebKit defers media loading for unattached views.
 
 ## Signing and packaging
 
+The intended public channels are a notarized GitHub Release download and
+`brew install --cask xoba/tap/fb`. The cask is not published yet. See
+[Distribution.md](Distribution.md) for the concrete release workflow and
+legacy-server migration. Local redeployment is separate from publication.
+
 Packaging requires an installed **Developer ID Application** certificate with
 its matching private key. It does not create certificates or change the Apple
 developer account. App Store Connect credentials are not required for a direct
